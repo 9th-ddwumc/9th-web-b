@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nav Example</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+      }
+
+      .nav {
+        background-color: rgb(183, 183, 183);
+        width: 400px;
+        height: 60px;
+        color: white;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        border-radius: 35px;
+      }
+
+      .nav__button {
+        position: relative;
+        padding: 12px 20px;
+        color: white;
+        border-radius: 35px;
+        transition: color 0.2s ease; /* 색 변화 */
+        background-color: transparent;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .nav__button:hover {
+        color: rgb(203, 203, 203);
+      }
+
+      .nav__button--selected {
+        color: rgb(22, 174, 22);
+      }
+
+      .nav__sidebar {
+        position: fixed;
+        top: 0;
+        right: -250px; /* 화면 밖에 숨김 */
+        width: 250px;
+        height: 100vh;
+        background-color: rgb(0, 0, 0);
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        box-sizing: border-box;
+        transition: right 0.3s ease;
+        z-index: 1000;
+        font-size: 30px;
+      }
+
+      .nav__sidebar.active {
+        right: 0; /* 슬라이드 */
+      }
+
+      .nav__hamburger {
+        display: none;
+        font-size: 30px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+      }
+
+      /* 전체 화면 크기에 따른 속성 관리 */
+      @media (max-width: 600px) {
+        .nav {
+          display: none;
+        }
+        .nav__links {
+          display: none;
+          flex-direction: column;
+          position: absolute;
+          top: 60px;
+          background-color: rgb(183, 183, 183);
+          width: 100%;
+          border-radius: 0 0 35px 35px;
+        }
+        .nav__hamburger {
+          display: block;
+        }
+        .nav__links.show {
+          display: flex;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="nav">
+      <div class="nav__links">
+        <a href="home.html" class="nav__button">Logo</a>
+        <a href="projects.html" class="nav__button nav__button--selected">Projects</a>
+        <a href="members.html" class="nav__button">Members</a>
+        <a href="faq.html" class="nav__button">FAQ</a>
+      </div>
+    </div>
+    <button class="nav__hamburger">&#9776;</button>
+    <div class="nav__sidebar">
+      <a href="home.html" class="nav__button">home</a>
+      <a href="projects.html" class="nav__button nav__button--selected">Projects</a>
+      <a href="members.html" class="nav__button">Members</a>
+      <a href="faq.html" class="nav__button">FAQ</a>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
