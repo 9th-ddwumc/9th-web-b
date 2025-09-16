@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>NAV</title>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar__menu">
+        <div class="navbar__fire">🔥</div>
+        <div>Project</div>
+        <div>Members</div>
+        <div>FAQ</div>
+      </div>
+    </nav>
+
+    <div class="hamburger">☰</div>
+
+    <aside class="sidebar">
+      <div class="sidebar__close">✖</div>
+      <div class="sidebar__item">Project</div>
+      <div class="sidebar__item">Members</div>
+      <div class="sidebar__item">FAQ</div>
+    </aside>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // nav 버튼 active 토글
+        const buttons = document.querySelectorAll(".navbar__menu div");
+        buttons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            buttons.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+          });
+        });
+
+        // 햄버거 & 사이드바
+        const hamburger = document.querySelector(".hamburger");
+        const sidebar = document.querySelector(".sidebar");
+        const closeBtn = document.querySelector(".sidebar__close");
+
+        // 햄버거 클릭 → 사이드바 열기 + 햄버거 숨기기
+        hamburger.addEventListener("click", () => {
+          sidebar.classList.add("open");
+          hamburger.style.display = "none";
+        });
+
+        // 닫기 버튼 → 사이드바 닫기 + 햄버거 다시 보이기
+        closeBtn.addEventListener("click", () => {
+          sidebar.classList.remove("open");
+          if (window.innerWidth <= 600) {
+            hamburger.style.display = "block";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

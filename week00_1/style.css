@@ -1,0 +1,119 @@
+nav {
+  color: white;
+}
+
+body {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column; /* nav와 햄버거를 세로 배치 */
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+/* nav 전체 */
+.navbar {
+  width: 455px;
+  height: 65px;
+  flex-shrink: 0;
+  border-radius: 50px;
+  background: rgba(144, 144, 144, 0.58);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* 메뉴 박스 */
+.navbar__menu {
+  display: flex;
+  gap: 8px;
+}
+
+.navbar__menu div {
+  width: 112.18px;
+  height: 54px;
+  border-radius: 50px;
+  background: transparent;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.navbar__menu div.active {
+  background: #00b206;
+  color: #fff;
+}
+
+/* 불 아이콘은 조금 작게 */
+.navbar__fire {
+  width: 74.464px !important;
+}
+
+/* nav 밖 햄버거 버튼 */
+/* 기본 햄버거 숨김 */
+.hamburger {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: black; /* 흰 배경에서 안 사라지게 대비 색상 */
+}
+
+/* 작은 화면에서 nav 숨기고 햄버거 보이게 */
+@media (max-width: 600px) {
+  .navbar {
+    display: none; /* nav 전체 숨김 */
+  }
+
+  .hamburger {
+    display: block; /* 햄버거 표시 */
+    position: fixed; /* 화면에 고정 */
+    top: 15px; /* 위쪽 여백 */
+    right: 15px; /* 오른쪽 여백 */
+    z-index: 1100;
+  }
+}
+
+/* 사이드바 */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 250px;
+  height: 100%;
+  background: #222;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  transition: right 0.3s ease, width 0.3s ease;
+  z-index: 1000;
+}
+
+.sidebar.open {
+  right: 0;
+  width: 70%; /* 열리면 화면 70% 차지 */
+}
+
+.sidebar__close {
+  align-self: flex-end;
+  font-size: 24px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.sidebar__item {
+  padding: 15px 0;
+  border-bottom: 1px solid #444;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.sidebar__item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
