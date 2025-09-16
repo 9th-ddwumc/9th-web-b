@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--CSS 파일업로드-->
+    <link rel="stylesheet" href="./style.css" />
+
+    <title>UMC TODOLIST</title>
+  </head>
+  <body>
+    <div class="todo-container">
+      <h1 class="todo-container__header">UMC Study Plan</h1>
+      <form id="todo-form" class="todo-container__form">
+        <input
+          type="text"
+          id="todo-input"
+          class="todo-container__input"
+          placeholder="스터디 계획을 작성해보세요!"
+          required
+        />
+      </form>
+      <div class="render-container">
+        <div class="render-container__section">
+          <h2 class="render-container__title">해야할 일</h2>
+          <ul id="todo-list" class="render-container__list"></ul>
+        </div>
+        <div class="render-container__section">
+          <h2 class="render-container__title">해낸 일</h2>
+          <ul id="done-list" class="render-container__list"></ul>
+        </div>
+      </div>
+    </div>
+    <!--JS 파일 업로드-->
+    <script src="./script.js"></script>
+  </body>
+</html>
