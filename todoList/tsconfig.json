@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2016", // ECMAScript 2016으로 컴파일
+    "module": "ES2015", // ES2015 모듈 시스템 사용
+    "rootDir": "./src", // 소스 파일의 루트 디렉토리
+    "outDir": "./dist", // 컴파일 결과 저장 디렉토리
+    "esModuleInterop": true, // ES 모듈 호환성 설정
+    "forceConsistentCasingInFileNames": true, // 파일 이름 대소문자 일관성 검사
+    "strict": true, // 엄격한 타입 검사
+    "skipLibCheck": true, // 라이브러리 파일 검사 건너뜀
+    "removeComments": true, // 컴파일된 코드에서 주석 제거
+    "noEmitOnError": false, // 오류 발생 시 결과 출력 여부 (false = 출력)
+    "noUnusedLocals": true, // 사용하지 않는 지역 변수 에러 발생
+    "noUnusedParameters": true, // 사용하지 않는 함수 매개변수 에러 발생
+    "noImplicitReturns": true, // 모든 함수에서 반환값이 일관되게 있어야 함
+    "noFallthroughCasesInSwitch": true, // switch 문에서 fallthrough 방지
+    "noUncheckedIndexedAccess": true // 인덱스 접근 시 체크되지 않은 경우 에러 발생
+  }
+}
