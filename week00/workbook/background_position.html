@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+ 
+ /* Shared among all <div>s */
+div {
+  background-color: #ffee99;
+  background-repeat: no-repeat;
+  width: 300px;
+  height: 80px;
+  margin-bottom: 12px;
+}
+
+/* These examples use the `background` shorthand property */
+.example-one {
+  background: url("https://postfiles.pstatic.net/MjAyNTA5MTZfMTY4/MDAxNzU4MDAyMzk3Mzc2.IAoVfybw8E9PsKQP-MFNwGdqaUOCKFv5qQl2cWbGNzQg.LZ7CtzaLQ4Tsw7kEMRbo6WPNZ8cLFJVS40YPVLGtEykg.PNG/%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B82.png?type=w580") #ffee99 2.5cm bottom no-repeat;
+}
+.example-two {
+  background: url("https://postfiles.pstatic.net/MjAyNTA5MTZfMTY4/MDAxNzU4MDAyMzk3Mzc2.IAoVfybw8E9PsKQP-MFNwGdqaUOCKFv5qQl2cWbGNzQg.LZ7CtzaLQ4Tsw7kEMRbo6WPNZ8cLFJVS40YPVLGtEykg.PNG/%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B82.png?type=w580") #ffee99 left 4em bottom 1em no-repeat;
+}
+
+/* Multiple background images: Each image is matched with the
+   corresponding position, from first specified to last. */
+.example-three {
+  background-image: url("https://postfiles.pstatic.net/MjAyNTA5MTZfMTY4/MDAxNzU4MDAyMzk3Mzc2.IAoVfybw8E9PsKQP-MFNwGdqaUOCKFv5qQl2cWbGNzQg.LZ7CtzaLQ4Tsw7kEMRbo6WPNZ8cLFJVS40YPVLGtEykg.PNG/%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B82.png?type=w580");
+  background-position:
+    10px 10px,
+    right 10em bottom 2em;
+}
+</style>
+</head>
+<body>
+<div class="example-one">Example One</div>
+<div class="example-two">Example Two</div>
+<div class="example-three">Example Three</div>
+
+</body>
+</html>
