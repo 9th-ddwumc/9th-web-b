@@ -41,10 +41,10 @@ const createTodoElement = (todo, isDone) => {
   button.classList.add("render-container__item-button");
   if (isDone) {
     button.textContent = "삭제";
-    button.style.backgroundColor = "#dc3545";
+    button.style.backgroundColor = "#80a3c9ff";
   } else {
     button.textContent = "완료";
-    button.style.backgroundColor = "#007bff";
+    button.style.backgroundColor = "#80a3c9ff";
   }
   button.addEventListener("click", () => {
     if (isDone) {
@@ -56,13 +56,6 @@ const createTodoElement = (todo, isDone) => {
   li.appendChild(button);
   return li;
 };
-todoForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const text = getTodoText();
-  if (text) {
-    addTodo(text);
-  }
-});
 
 todoInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {

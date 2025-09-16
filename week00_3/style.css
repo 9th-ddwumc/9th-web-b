@@ -9,66 +9,63 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f1f1f1;
+  margin-top: 50px;
+  background-color: rgb(213, 236, 245);
 }
 .todo-container {
-  background-color: white;
+  background-color: transparent;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 40px 10px rgba(0, 0, 0, 0.1);
-  width: 350px;
+  height: auto;
+  width: 100%;
   text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 .todo-container__header {
   font-size: 24px;
-  margin-bottom: 16px;
+  margin-bottom: 40px;
+  height: 100%;
 }
 .todo-container__form {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  align-items: center;
+  margin-bottom: 40px;
 }
 .todo-container__input {
-  flex: 1;
+  width: 500px;
   padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border: 1px solid #000;
   font-size: 14px;
 }
-.todo-container__button {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
-}
-.todo-container__button:hover {
-  background-color: #218838;
-}
+
 .render-container {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 100px;
+  align-items: flex-start;
 }
 .render-container__title {
+  width: 80px;
   font-size: 18px;
+  padding-bottom: 10px;
   margin-bottom: 10px;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  border-bottom: 1px solid gray;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .render-container__section {
-  width: 100%;
-  text-align: left;
+  width: 200px;
+  text-align: center;
 }
 .render-container__list {
   list-style: none;
   padding: 0;
   margin: 0;
+  width: 100%;
 }
 .render-container__item {
   display: flex;
@@ -76,9 +73,7 @@ body {
   align-items: center;
 
   padding: 8px;
-  border-bottom: 1px solid #ddd;
-  background-color: #f9f9f9;
-  border-radius: 6px;
+  border-bottom: 1px solid gray;
   margin-bottom: 6px;
   width: 100%;
 }
@@ -87,15 +82,11 @@ body {
   flex: 1;
 }
 .render-container__item-button {
-  background-color: #dc3545;
-  color: white;
+  color: black;
   border: none;
   padding: 6px 10px;
   cursor: pointer;
   border-radius: 6px;
   font-size: 12px;
   transition: background-color 0.3s ease;
-}
-.render-container__item-button:hover {
-  background-color: #c82333;
 }
