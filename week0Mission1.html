@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SMUMC</title>
+<style>
+  body {
+    background-color: #18171c;
+    margin: 0;
+  }
+
+  .nav-menu {
+    position: fixed;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    background-color: #18171c;
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .nav-menu__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #18171c;
+    border-radius: 30px;
+  }
+
+  .nav-menu__item {
+    margin: 0 10px;
+  }
+
+  .nav-menu__link {
+    display: block;
+    padding: 20px 25px;
+    text-decoration: none;
+    color: white;
+    background-color: #18171c;
+    border-radius: 30px;
+    transition: background-color 0.5s, color 0.3s ease, transform 0.3s ease;
+  }
+
+  .nav-menu__link--active {
+    background-color: #319a49;
+    color: white;
+    padding: 15px 25px;
+    font-weight: bold;
+  }
+
+  .nav-menu__link:hover:not(.nav-menu__link--active) {
+    background-color: #c3d9b4;
+  }
+ 
+  /* 체크박스 숨기기 사이드바 토글 */
+  #sidebar-toggle {
+    display: none;
+  }
+
+  .hamburger-btn {
+    display: none;
+    position: fixed;
+    top: 25px;
+    right: 20px; /* 오른쪽으로 다시 변경 */
+    z-index: 1001;
+    cursor: pointer;
+    padding: 15px; /* 패딩 증가 */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+
+  .hamburger-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .hamburger-btn span {
+    display: block;
+    width: 30px; /* 크기 증가 */
+    height: 4px; /* 두께 증가 */
+    background-color: white;
+    margin: 6px 0; /* 간격 증가 */
+    transition: 0.3s;
+    border-radius: 2px;
+  }
+
+  /* 체크박스 체크시 햄버거 버튼 애니메이션 */
+  #sidebar-toggle:checked + .hamburger-btn span:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+  }
+
+  #sidebar-toggle:checked + .hamburger-btn span:nth-child(2) {
+    opacity: 0;
+  }
+
+  #sidebar-toggle:checked + .hamburger-btn span:nth-child(3) {
+    transform: rotate(-45deg) translate(8px, -8px);
+  }
+
+  /* 사이드바 */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: -300px; /* 오른쪽에서 슬라이드 */
+    width: 300px;
+    height: 100vh;
+    background-color: #18171c;
+    z-index: 1000;
+    transition: right 0.3s ease; /* right로 변경 */
+    padding-top: 80px;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+  }
+
+  /* 체크박스가 체크되었을 때 사이드바 표시 */
+  #sidebar-toggle:checked ~ .sidebar {
+    right: 0; /* right로 변경 */
+  }
+
+  .sidebar__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .sidebar__item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .sidebar__link {
+    display: block;
+    padding: 20px 30px;
+    text-decoration: none;
+    color: white;
+    transition: background-color 0.3s ease;
+    font-size: 18px;
+  }
+
+  .sidebar__link--active {
+    background-color: #319a49;
+    color: white;
+    font-weight: bold;
+  }
+
+  .sidebar__link:hover:not(.sidebar__link--active) {
+    background-color: #c3d9b4;
+    color: #18171c;
+  }
+
+  /* 오버레이 (사이드바가 열릴 때 배경) */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  /* 체크박스가 체크되었을 때 오버레이 표시 */
+  #sidebar-toggle:checked ~ .overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* 오버레이 클릭 시 사이드바 닫기 (체크박스 해제) */
+  .overlay-close {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .main-content {
+    margin-top: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 100px);
+    background-color: #18171c;
+  }
+
+  .main-content__logo-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .main-content__logo {
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+  }
+
+  .pulse-text {
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 20px;
+    text-align: center;
+    color: rgba(100, 100, 100, 1);
+    animation: pulseFade 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseFade {
+    0%, 100% {
+      color: rgba(100, 100, 100, 1);
+    }
+    50% {
+      color: rgba(100, 100, 100, 0.3);
+    }
+  }
+
+  .main-content__button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #545755;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .main-content__button:hover {
+    background-color: #6b6d6c;
+  }
+
+  /* 미디어 쿼리 - 태블릿 및 모바일 */
+  @media (max-width: 768px) {
+    /* 기존 네비게이션 숨김 */
+    .nav-menu {
+      display: none;
+    }
+    
+    /* 햄버거 버튼 표시 */
+    .hamburger-btn {
+      display: block;
+    }
+    
+    /* 메인 컨텐츠 여백 조정 */
+    .main-content {
+      margin-top: 20px;
+    }
+    
+    /* 로고 크기 조정 */
+    .main-content__logo {
+      max-width: 80%;
+    }
+    
+    /* 텍스트 크기 조정 */
+    .pulse-text {
+      font-size: 13px;
+      padding: 0 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .main-content__logo {
+      max-width: 90%;
+    }
+    
+    .pulse-text {
+      font-size: 12px;
+    }
+    
+    .sidebar {
+      width: 280px;
+      right: -280px; /* 오른쪽에서 사이드바 */
+    }
+  }
+</style>
+</head>
+<body>
+  <!-- 체크박스와 햄버거 버튼(사이드바 토글용) -->
+  <input type="checkbox" id="sidebar-toggle">
+  <label for="sidebar-toggle" class="hamburger-btn">
+    <span></span>
+    <span></span>
+    <span></span>
+  </label>
+
+  <!-- 사이드바 -->
+  <nav class="sidebar">
+    <ul class="sidebar__list">
+      <li class="sidebar__item">
+        <label for="sidebar-toggle">
+          <a href="#" class="sidebar__link sidebar__link--active">홈</a>
+        </label>
+      </li>
+      <li class="sidebar__item">
+        <label for="sidebar-toggle">
+          <a href="#" class="sidebar__link">projects</a>
+        </label>
+      </li>
+      <li class="sidebar__item">
+        <label for="sidebar-toggle">
+          <a href="#" class="sidebar__link">Members</a>
+        </label>
+      </li>
+      <li class="sidebar__item">
+        <label for="sidebar-toggle">
+          <a href="#" class="sidebar__link">FAQ</a>
+        </label>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- 오버레이 -->
+  <div class="overlay">
+    <label for="sidebar-toggle" class="overlay-close"></label>
+  </div>
+
+  <!-- 기본 네비게이션 -->
+  <header>
+    <nav class="nav-menu">
+      <ul class="nav-menu__list">
+        <li class="nav-menu__item"><a href="#" class="nav-menu__link nav-menu__link--active">홈</a></li>
+        <li class="nav-menu__item"><a href="#" class="nav-menu__link">projects</a></li>
+        <li class="nav-menu__item"><a href="#" class="nav-menu__link">Members</a></li>
+        <li class="nav-menu__item"><a href="#" class="nav-menu__link">FAQ</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <div class="main-content__logo-wrapper">
+      <img src="SMUMC_LOGO.PNG" alt="로고" class="main-content__logo" />
+      <h1 class="pulse-text">앱&웹 서비스 런칭에 도전하는 대학생 IT 연합동아리</h1>
+      <button class="main-content__button">자세히 보기</button>
+    </div>
+  </main>
+</body>
+</html>
