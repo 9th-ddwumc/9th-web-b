@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Layout Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* 메인 그리드 컨테이너 */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            grid-template-rows: auto auto 1fr auto;
+            min-height: 100vh;
+            grid-template-areas:
+                "header menu"
+                "hero hero"
+                "content content"
+                "banner banner";
+        }
+
+        /* 헤더 */
+        .header {
+            grid-area: header;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* 메뉴 */
+        .menu {
+            grid-area: menu;
+            background-color: #e74c3c;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* 히어로 섹션 */
+        .hero {
+            grid-area: hero;
+            background-color: #3498db;
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        /* 콘텐츠 영역 - 3개 컬럼으로 변경 */
+        .content {
+            grid-area: content;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;  /* MAIN : 공백 : 사이드바 */
+            min-height: 400px;
+        }
+
+        /* 메인 콘텐츠 */
+        .main {
+            background-color: #34495e;
+            color: white;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        /* 중간 공백 영역 */
+        .spacer {
+            background-color: white;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+        }
+
+        .image-section {
+            background-color: #bdc3c7;
+            color: #2c3e50;
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .extra-section {
+            background-color: #27ae60;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 배너 */
+        .banner {
+            grid-area: banner;
+            background-color: #f39c12;
+            color: #2c3e50;
+            padding: 30px; /*내부 여백*/
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "header"
+                    "menu"
+                    "hero"
+                    "content"
+                    "banner";
+            }
+
+            .content {
+                grid-template-columns: 1fr; 
+                /*그리드의 열 구조를 정의 1fr >> 세로로 한개의 열만 가지는 코드*/
+                grid-template-rows: auto auto auto;
+                /*그리드의 행 구조를 정의 auto가 3개니까 3개 행 생성*/
+            }
+
+            .spacer {
+                display: none;
+            }
+
+            .sidebar {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto;
+            }
+
+            .hero {
+                font-size: 24px;
+                padding: 40px 20px;
+            }
+
+            .main {
+                font-size: 24px;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">HEADER</div>
+        <div class="menu">MENU</div>
+        <div class="hero">HERO</div>
+        
+        <div class="content">
+            <div class="main">MAIN</div>
+            <div class="spacer"></div> <!-- 중간 공백 -->
+            <div class="sidebar">
+                <div class="image-section">IMAGE</div>
+                <div class="extra-section">EXTRA</div>
+            </div>
+        </div>
+        
+        <div class="banner">BANNER</div>
+    </div>
+</body>
+</html>
