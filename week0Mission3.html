@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMC Study Plan</title>
+
+    <style>
+        body{
+            background-color: rgb(247, 248, 255);
+        }
+        .mainTitle{
+            text-align: center;
+        }
+        hr{
+            width:60%;
+            align-items: center;
+        }
+        .input_block{
+            display: flex;
+            justify-content: center;
+        }
+        input{
+            padding: 10px;
+            width: 400px;
+        }
+        .subTitle{
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            border-bottom: 4px solid rgba(166, 186, 210, 0.6); /* 밑줄 대신 보더로 색 지정 */
+            display: inline-block; /* 밑줄 크기를 텍스트 크기에 맞춤 */
+        }
+        .PlanSections{
+            display: flex;
+            text-align: center;
+            gap: 200px;
+            justify-content: center;
+        }
+        /* 리스트 스타일 없애고 깔끔하게 */
+        #todoList, #doneList {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        /* 할 일, 해낸 일 항목 스타일 */
+        .todo-item, .done-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            margin-bottom: 6px 0;
+
+            width: 200px;
+            border-bottom: 4px solid rgba(166, 186, 210, 0.6);
+        }
+
+
+        /* 버튼 스타일 */
+        .todo-item button, .done-item button {
+            margin-left: 10px;
+            padding: 4px 8px;
+            border: none;
+            background-color: rgba(166, 186, 210, 0.6);
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .todo-item button:hover, .done-item button:hover {
+            background-color: rgba(166, 186, 210, 0.6);
+        }
+
+    </style>
+</head>
+<body>
+    <header><h1 class = "mainTitle">UMC Study Plan</h1></header>
+    <br>
+    <hr>
+    <div class="input_block">
+        <input placeholder="스터디 계획을 작성해보세요!"/>
+    </div>
+    <div class="PlanSections">
+        <section>
+            <div class="subTitle">해야 할 일</div>
+            <ul id="todoList"></ul> <!-- 할 일 목록 -->
+        </section>
+        <section>
+            <div class="subTitle">해낸 일</div>
+            <ul id="doneList"></ul> <!-- 해낸 일 목록 -->
+        </section>
+    </div>
+
+    <script>
+    const taskInput = document.querySelector('input[placeholder="스터디 계획을 작성해보세요!"]');
+    const todoList = document.getElementById('todoList');
+    const doneList = document.getElementById('doneList');
+
+    function createTaskItem(text) {
+        const li = document.createElement('li');
+        li.className = 'todo-item';
+
+        const span = document.createElement('span');
+        span.textContent = text;
+
+        const completeBtn = document.createElement('button');
+        completeBtn.textContent = '완료';
+        completeBtn.addEventListener('click', () => completeTask(li));
+
+        li.appendChild(span);
+        li.appendChild(completeBtn);
+
+        return li;
+    }
+
+    function completeTask(li) {
+        li.className = 'done-item';
+
+        // 완료 버튼 제거
+        li.querySelector('button').remove();
+
+        // 삭제 버튼 추가
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = '삭제';
+        deleteBtn.addEventListener('click', () => li.remove());
+
+        li.appendChild(deleteBtn);
+
+        doneList.appendChild(li);
+    }
+
+    taskInput.addEventListener('keydown', e => {
+        if(e.key === 'Enter') {
+            const value = taskInput.value.trim();
+            if(!value) return; // 빈값이면 무시
+
+            const taskItem = createTaskItem(value);
+            todoList.appendChild(taskItem);
+
+            taskInput.value = '';
+        }
+    });
+    </script>
+
+</body>
+</html>
