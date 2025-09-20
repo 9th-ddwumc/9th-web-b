@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Combined Page</title>
+
+  <style>
+body { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: black;
+    margin: 0;
+}
+ 
+.navbar {
+    display: flex;
+    align-items: center; 
+    justify-content: space-between; 
+
+    width: 300px;
+    height: 30px;
+    border-radius: 20px;
+    padding: 10px 50px;
+    font-size: 13px;
+    color: white;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.nav__main {
+    padding: 10px 20px;
+    background-color: #4ad54a;
+    color: white;
+    border-radius: 20px;
+    text-decoration: none;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.5s ease;
+}
+
+.nav-links a:hover {
+    color: #b9b9b9;
+}
+
+.hamburger-button {
+    display: none; /*숨김처리*/
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.hamburger-button .bar {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 5px 0;
+}
+
+.sidebar {
+    position: fixed;
+
+    top: 0;
+    right: 0;
+    width: 250px;
+    height: 100%;
+
+    background-color: #2b2b2b;
+
+    transform: translateX(100%); /* 오른쪽 밖으로 숨기기 */
+    transition: transform 0.3s ease-in-out;
+
+    display: flex; /*중앙정렬*/
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.sidebar.open {
+    transform: translateX(0); 
+}
+
+.sidebar-links {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar-links li {
+    padding: 10px 0;
+}
+
+.sidebar-links a {
+    color: white;
+    font-size: 1.5em;
+    text-decoration: none;
+}
+
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2em;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+@media (max-width: 750px) {
+    .navbar .nav-links {
+        display: none;
+    }
+
+    .hamburger-button {
+        display: block; 
+    }
+}
+  </style>
+</head>
+<body>
+ 
+  <nav class="navbar">
+     <ul class="nav-links">
+       <li><a href="main.html" class="nav__main">🔥</a>
+       <li><a href="projects.html" class="nav__projects">Projects</a></li>
+       <li><a href="members.html" class="nav__members">Members</a></li>
+       <li><a href="faq.html" class="nav__FAQ">FAQ</a></li>
+      </ul>
+  </nav> 
+
+  <button class="hamburger-button" aria-label="Open menu">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+  </button>
+
+  <aside class="sidebar" aria-hidden="true">
+      <button class="close-button" aria-label="Close menu">X</button>
+      <ul class="sidebar-links">
+          <li><a href="main.html">Home</a></li>
+          <li><a href="projects.html">Projects</a></li>
+          <li><a href="members.html">Members</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+      </ul>
+  </aside>
+
+ 
+  <script>
+
+const hamburgerButton = document.querySelector('.hamburger-button');
+const sidebar = document.querySelector('.sidebar');
+const closeButton = document.querySelector('.close-button');
+const sidebarLinks = document.querySelectorAll('.sidebar-links a');
+
+// 사이드바 열기
+hamburgerButton.addEventListener('click', () => {
+    sidebar.classList.add('open');
+    sidebar.setAttribute('aria-hidden', 'false');
+});
+
+// x 누르고 사이드바 닫기
+closeButton.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    sidebar.setAttribute('aria-hidden', 'true');
+});
+
+// 메뉴 클릭하면 사이드바 닫기
+sidebarLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        sidebar.setAttribute('aria-hidden', 'true');
+    });
+});
+  </script>
+</body>
+</html>
