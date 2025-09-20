@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>반응형 Navbar</title>
+    <style>
+        /* CSS 스타일 */
+        body { 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: black;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center; 
+            justify-content: space-between; 
+            width: 300px;
+            height: 30px;
+            background-color: #151821;
+            border-radius: 20px;
+            padding: 10px 50px;
+            font-size: 12px;
+            color: white;
+            margin-top: 20px; /* 상단 여백 추가 */
+        }
+        
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav__main {
+            padding: 10px 20px;
+            background-color: #4ad54a;
+            color: white;
+            border-radius: 20px;
+            text-decoration: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.5s ease;
+        }
+
+        .nav-links a:hover {
+            color: #b9b9b9;
+        }
+
+        .hamburger-button {
+            display: none; /* 데스크톱에서 숨김 */
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .hamburger-button .bar {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #2b2b2b;
+            transform: translateX(100%); /* 오른쪽 밖으로 숨기기 */
+            transition: transform 0.3s ease-in-out;
+            display: none; /* 초기에는 숨김 */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+            display: flex; /* JavaScript로 클래스 추가 시 나타남 */
+        }
+
+        .sidebar-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-links li {
+            padding: 10px 0;
+        }
+
+        .sidebar-links a {
+            color: white;
+            font-size: 1.5em;
+            text-decoration: none;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* 미디어 쿼리 */
+        @media (max-width: 768px) {
+            .navbar {
+                width: calc(100% - 40px);
+                padding: 10px 20px;
+                border-radius: 0;
+            }
+            
+            .nav-links {
+                display: none; /* 데스크톱 메뉴 숨기기 */
+            }
+
+            .hamburger-button {
+                display: block; /* 햄버거 버튼 보이기 */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="nav__main">🔥</a>
+        <ul class="nav-links">
+            <li><a href="projects.html" class="nav__projects">Projects</a></li>
+            <li><a href="members.html" class="nav__members">Members</a></li>
+            <li><a href="faq.html" class="nav__FAQ">FAQ</a></li>
+        </ul>
+        <button class="hamburger-button" aria-label="Toggle menu">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </button>
+    </nav> 
+
+    <aside class="sidebar">
+        <button class="close-button">X</button>
+        <ul class="sidebar-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="members.html">Members</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+        </ul>
+    </aside>
+
+    <script>
+        // 자바스크립트 코드
+        const hamburgerButton = document.querySelector('.hamburger-button');
+        const sidebar = document.querySelector('.sidebar');
+        const closeButton = document.querySelector('.close-button');
+        const sidebarLinks = document.querySelectorAll('.sidebar-links a');
+
+        // 햄버거 버튼 클릭 시 사이드바 열기
+        hamburgerButton.addEventListener('click', () => {
+            sidebar.classList.add('open');
+        });
+
+        // 닫기 버튼 클릭 시 사이드바 닫기
+        closeButton.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+        });
+
+        // 사이드바 메뉴 링크 클릭 시 사이드바 닫기
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+            });
+        });
+    </script>
+</body>
+</html>
