@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid + Flex</title>
+  <style>
+    body {
+      margin: 0;
+      font-size:22px;
+      font-weight: bold;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr; /*비율*/
+      grid-template-rows: auto;
+      grid-template-areas:
+        "header menu menu menu"
+        "hero hero hero hero"
+        "main main . side"
+        "banner banner banner banner";
+      height: 100vh;
+   }
+
+    header {
+      grid-area: header;
+      background: #111a2b;
+      
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: white;
+    }
+
+    nav {
+      grid-area: menu;
+      background: #ea2e51;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: white;
+    }
+
+    .hero {
+      grid-area: hero;
+      background: #4591cf;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: white;
+    }
+
+    main {
+      grid-area: main;
+      background: #1c2b3a;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: white;
+    }
+
+    .side {
+      grid-area: side;
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .image {
+      background: #b2dfdb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .extra {
+      background: #33b38a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    footer {
+      grid-area: banner;
+      background: #ffcb49;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>HEADER</header>
+    <nav>MENU</nav>
+    <div class="hero">HERO</div>
+    <main>MAIN</main>
+    <div class="side">
+      <div class="image">IMAGE</div>
+      <div class="extra">EXTRA</div>
+    </div>
+    <footer>BANNER</footer>
+  </div>
+</body>
+</html>
