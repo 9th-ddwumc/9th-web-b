@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <!--css파일 업로드-->
+    <link rel="stylesheet" href="./style.css" />
+    <!--JS파일 업로드-->
+    <script type="module" src="./dist/script.js" defer></script>
+    <title>UMC todo</title>
+</head>
+<body>
+    <div class="todo-container">
+        <h1 class="todo-container__header">YONG TODO</h1>
+        <form id = "todo-form" class="todo-container__form">
+            <input type="text" id="todo-input" class="todo-container__input" placeholder="할 일을 입력해주세요." required>
+            <button type="submit" class="todo-container__button">할일 추가</button>
+        </form>
+        <div class="render-container">
+            <div class="render-container__section">
+                <h2 class="render-container__title">할 일</h2>
+                <ul id="todo-list" class="render-container__list"></ul>
+            </div>
+            <div class="render-container__section">
+                <h2 class="render-container__title">완료</h2>
+                <ul id="done-list" class="render-container__list">
+                    <li class="render-container__item"> </li>
+                </ul>
+            </div>
+        </div>
+    </div> 
+</body>
+</html>
