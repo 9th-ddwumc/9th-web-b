@@ -1,0 +1,121 @@
+/* ===== 기본 스타일 ===== */
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #eef2f3;
+  margin: 0;
+}
+
+/* ===== Todo 컨테이너 ===== */
+.todo-container {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: center;
+}
+
+/* ===== 제목 ===== */
+.todo-container__header {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+/* ===== 입력 폼 ===== */
+.todo-container__form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.todo-container__input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.todo-container__button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.todo-container__button:hover {
+  background-color: #218838;
+}
+
+/* ===== 리스트 컨테이너 ===== */
+.render-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* ===== 리스트 ===== */
+.render-container__section {
+  width: 100%;
+  text-align: left;
+}
+
+.render-container__title {
+  font-size: 18px;
+  margin-bottom: 10px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.render-container__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* ===== 리스트 아이템 ===== */
+.render-container__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  background: #f9f9f9;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  width: 100%; /* Make sure the item takes full available width */
+}
+
+.render-container__item-text {
+  flex: 1;
+
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide any overflow */
+  text-overflow: ellipsis; /* Add '...' when text overflows */
+  display: block; /* Ensure it's treated as a block for the overflow to work */
+}
+
+.render-container__item-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 12px;
+  transition: background-color 0.3s ease;
+}
+
+.render-container__item-button:hover {
+  background-color: #c82333;
+}
