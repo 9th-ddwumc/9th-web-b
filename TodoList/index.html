@@ -3,24 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Todo List</title>
+    <title>UMC TODO</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div>
-      <header><h1>UMC Study Plan</h1></header>
-      <hr />
-      <input placeholder="스터디 계획을 작성해보세요!" />
-      <div class="sections">
-        <section>
-          <div class="title">해야 할 일</div>
+    <div class="todo">
+      <header class="todo__header">
+        <h1 class="todo__title">MEONGEE TODO</h1>
+      </header>
+
+      <div class="todo__input-area">
+        <input class="todo__input" placeholder="할 일 입력" />
+        <button class="todo__button todo__button--finish">등록 하기</button>
+      </div>
+
+      <div class="todo__sections">
+        <section class="todo__section">
+          <div class="todo__section-title">할 일</div>
+          <div class="todo__list todo__list--todo"></div>
         </section>
-        <section>
-          <div class="title">해낸 일</div>
+        <section class="todo__section">
+          <div class="todo__section-title">완료</div>
+          <div class="todo__list todo__list--done"></div>
         </section>
       </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="./dist/script.js"></script>
   </body>
 </html>
