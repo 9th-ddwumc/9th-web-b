@@ -294,24 +294,16 @@
   <nav class="sidebar">
     <ul class="sidebar__list">
       <li class="sidebar__item">
-        <label for="sidebar-toggle">
           <a href="#" class="sidebar__link sidebar__link--active">홈</a>
-        </label>
       </li>
       <li class="sidebar__item">
-        <label for="sidebar-toggle">
           <a href="#" class="sidebar__link">projects</a>
-        </label>
       </li>
       <li class="sidebar__item">
-        <label for="sidebar-toggle">
           <a href="#" class="sidebar__link">Members</a>
-        </label>
       </li>
       <li class="sidebar__item">
-        <label for="sidebar-toggle">
           <a href="#" class="sidebar__link">FAQ</a>
-        </label>
       </li>
     </ul>
   </nav>
@@ -340,5 +332,19 @@
       <button class="main-content__button">자세히 보기</button>
     </div>
   </main>
+   <script>
+    // 사이드바 링크 클릭 시 사이드바 닫기
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebarLinks = document.querySelectorAll('.sidebar__link');
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      
+      sidebarLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          // 사이드바 닫기 (체크박스 해제)
+          sidebarToggle.checked = false;
+        });
+      });
+    });
+  </script>
 </body>
 </html>
