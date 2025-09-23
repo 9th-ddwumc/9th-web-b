@@ -59,18 +59,20 @@ body {
   display: flex;
   justify-content: space-between;
   gap: 20px;
+  align-items: flex-start; /* 아이템 상단 정렬 */
 }
 
 /* ===== 리스트 ===== */
 .render-container__section {
-  width: 100%;
+  /* width: 100%;  <-- 제거 */
+  flex: 1 1 0; /* 각 섹션이 균등 분배 */
+  min-width: 0; /* 내부 내용이 줄어들 수 있도록 */
   text-align: left;
 }
 
 .render-container__title {
   font-size: 18px;
   margin-bottom: 10px;
-
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -85,24 +87,22 @@ body {
 /* ===== 리스트 아이템 ===== */
 .render-container__item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-
+  gap: 8px;
   padding: 8px;
   border-bottom: 1px solid #ddd;
   background: #f9f9f9;
   border-radius: 6px;
   margin-bottom: 6px;
-  width: 100%; /* Make sure the item takes full available width */
+  width: 100%;
 }
 
 .render-container__item-text {
   flex: 1;
-
-  white-space: nowrap; /* Prevent text from wrapping */
-  overflow: hidden; /* Hide any overflow */
-  text-overflow: ellipsis; /* Add '...' when text overflows */
-  display: block; /* Ensure it's treated as a block for the overflow to work */
+  min-width: 0; /* ★ 말줄임 필수 보강 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .render-container__item-button {
@@ -118,4 +118,12 @@ body {
 
 .render-container__item-button:hover {
   background-color: #c82333;
+}
+
+/* 접근성(선택) */
+.todo-container__input:focus-visible,
+.render-container__item-button:focus-visible,
+.todo-container__button:focus-visible {
+  outline: 2px solid #4c9ffe;
+  outline-offset: 2px;
 }
