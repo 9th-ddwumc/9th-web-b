@@ -1,5 +1,5 @@
 import React, { useState, type FormEvent } from 'react';
-import { type TTodo } from '../../week2_mission1/src/types/todo';
+import { type TTodo } from '../src/types/todo';
 
 const Todo = (): React.ReactElement => {
   const [todos, setTodos] = useState<TTodo[]>([]);

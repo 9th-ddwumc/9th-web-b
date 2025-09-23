@@ -2,4 +2,4 @@ export type TTodo ={
     id: number;
     text: string;
 };
-export default TTodo;
+//export default TTodo;

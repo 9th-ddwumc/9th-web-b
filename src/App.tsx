@@ -1,6 +1,5 @@
 import React from 'react';
-import './App.css';
-import Todo from '../../9th-web-b/components/Todo';
+import Todo from '../components/Todo.tsx'; 
 
 function App(): React.ReactElement {
   return (
