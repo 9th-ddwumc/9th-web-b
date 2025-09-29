@@ -10,15 +10,15 @@ export default function MovieCard({ movie }: MovieCardProps) {
   const [imageError, setImageError] = useState(false);
   
   const imageUrl = movie.poster_path 
-    ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
     : null;
 
   return (
     <div
-      className="relative rounded-xl shadow-lg overflow-hidden cursor-pointer transition-transform duration-500 hover:scale-105 bg-gray-200"
+      className="relative rounded-lg overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-gray-800"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      style={{ width: '200px', minHeight: '300px' }}
+      style={{ aspectRatio: '2/3' }}
     >
       {imageUrl && !imageError ? (
         <img
@@ -34,24 +34,29 @@ export default function MovieCard({ movie }: MovieCardProps) {
           }}
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gray-300">
+        <div className="w-full h-full flex items-center justify-center bg-gray-700">
           <div className="text-center p-4">
-            <div className="text-gray-500 mb-2">이미지 없음</div>
-            <div className="text-sm font-bold">{movie.title}</div>
+            <div className="text-gray-400 mb-2">이미지 없음</div>
+            <div className="text-sm font-bold text-white">{movie.title}</div>
           </div>
         </div>
       )}
       
       {isHovered && (
-        <div className="absolute inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center text-white p-4">
-          <h2 className="text-lg font-bold text-center leading-snug mb-2">
+        <div className="absolute inset-0 bg-black bg-opacity-80 flex flex-col justify-end p-5 text-white transition-opacity duration-300">
+          <h2 className="text-lg font-bold mb-2 leading-tight">
             {movie.title}
           </h2>
-          <p className="text-sm text-gray-300 text-center leading-relaxed overflow-hidden">
-            {movie.overview?.substring(0, 150)}...
+          <p className="text-sm text-gray-300 leading-relaxed line-clamp-3 mb-2">
+            {movie.overview || "줄거리 정보가 없습니다."}
           </p>
-          <div className="mt-2 text-xs text-yellow-400">
-            ⭐ {movie.vote_average.toFixed(1)}
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-yellow-400 font-semibold">
+              ⭐ {movie.vote_average.toFixed(1)}
+            </span>
+            <span className="text-gray-400">
+              {movie.release_date}
+            </span>
           </div>
         </div>
       )}
