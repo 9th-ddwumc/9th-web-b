@@ -13,6 +13,7 @@ import PopularPage from "./pages/PopularPage";
 import TopRatedPage from "./pages/TopRatedPage";
 import UpcomingPage from "./pages/UpcomingPage";
 import NowPlayingPage from "./pages/NowPlayingPage";
+import MovieDetailPage from "./pages/MovieDetailPage";
 
 function App() {
   console.log(import.meta.env.VITE_TMDB_KEY);
@@ -26,6 +27,7 @@ function App() {
           <Route path="top-rated" element={<TopRatedPage />} />
           <Route path="upcoming" element={<UpcomingPage />} />
           <Route path="now-playing" element={<NowPlayingPage />} />
+          <Route path="movies/:movieId" element={<MovieDetailPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
