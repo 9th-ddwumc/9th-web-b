@@ -4,6 +4,7 @@ import MoviePage from "./pages/MoviePage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/Homepage";
 import NotFoundPage from "./pages/NotFoundPage";
+import MovieDetailPage from "./pages/MovieDetail";
 
 const router = createBrowserRouter([
   {
@@ -15,9 +16,14 @@ const router = createBrowserRouter([
         path: "movies/:category",
         element: <MoviePage />,
       },
+      {
+        path: "movies/:category/:id",
+        element: <MovieDetailPage />,
+      },
     ],
   },
 ]);
+
 function App() {
   return <RouterProvider router={router}></RouterProvider>;
 }
