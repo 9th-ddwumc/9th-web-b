@@ -22,8 +22,8 @@ export default function MoviePage() {
   console.log(movies);
 
   return (
-    <div className="flex justify-center w-100%">
-      <div className="p-10 grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 place-items-center">
+    <div className="w-full flex justify-center">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 place-items-center max-w-screen-xl w-full p-10">
         {movies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
