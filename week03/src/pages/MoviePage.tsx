@@ -13,17 +13,14 @@ export default function MoviePage() {
           Authorization: `Bearer ${import.meta.env.VITE_TMDB_KEY}`,
         },
       });
-
       setMovies(data.results);
     };
-
     fetchMovies();
   }, []);
-  console.log(movies);
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 place-items-center max-w-screen-xl w-full p-10">
+    <div className="w-full">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 max-w-4xl mx-auto p-10">
         {movies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
