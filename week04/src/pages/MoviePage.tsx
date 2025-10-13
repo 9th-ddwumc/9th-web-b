@@ -4,34 +4,13 @@ import type { Movie } from "../types/movie";
 import MovieCard from "../components/MovieCard";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import { useParams } from "react-router-dom";
+import { useFetchMovies } from "../hooks/useFetchMovies";
 
 export default function MoviePage() {
-  const [movies, setMovies] = useState<Movie[]>([]); // 초기값 빈 배열
-  const [isPending, setIsPending] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [page, setPage] = useState(1);
   const { category } = useParams<{ category: string }>();
+  const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    if (!category) return;
-    const fetchMovies = async () => {
-      setIsPending(true);
-      setIsError(false);
-      try {
-        const { data } = await axios(`https://api.themoviedb.org/3/movie/${category}?language=ko&page=${page}`, {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_TMDB_KEY}`,
-          },
-        });
-        setMovies(Array.isArray(data?.results) ? data.results : []); // 항상 배열로 처리
-      } catch {
-        setIsError(true);
-      } finally {
-        setIsPending(false);
-      }
-    };
-    fetchMovies();
-  }, [page, category]);
+  const { movies, isPending, isError } = useFetchMovies(category || "popular", page);
 
   if (isPending) return <LoadingSpinner />;
   if (isError)
@@ -55,7 +34,7 @@ export default function MoviePage() {
           onClick={() => setPage((prev) => prev + 1)}
         >{`>`}</button>
       </div>
-      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 max-w-4xl mx-auto p-10">
+      <div className="grid gap-12 grid-cols-2 sm:grid-cols-3 md:grid-cols-5 max-w-6xl mx-auto p-10">
         {movies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
