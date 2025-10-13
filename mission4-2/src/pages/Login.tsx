@@ -1,5 +1,5 @@
 import { useForm } from "../hooks/useForm";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface LoginFormValues {
   email: string;
@@ -7,6 +7,8 @@ interface LoginFormValues {
 }
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const validate = (values: LoginFormValues) => {
     const errors: Partial<LoginFormValues> = {};
 
@@ -32,11 +34,13 @@ export default function Login() {
   const isValid = !errors.email && !errors.password && values.email && values.password;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-black">
+    <div className="flex justify-center min-h-screen bg-black pt-10">
       <div className="w-full max-w-xs flex flex-col items-stretch gap-5">
         <div className="relative flex items-center justify-center mb-6">
           <div className="absolute left-0">
-            <span className="text-white text-2xl">←</span>
+            <span className="text-white text-2xl" onClick={() => navigate("/")}>
+              ←
+            </span>
           </div>
           <h2 className="text-white text-xl font-bold text-center w-full">로그인</h2>
         </div>

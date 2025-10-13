@@ -1,10 +1,10 @@
 import { useState } from "react";
 import "./App.css";
+import MoviePage from "./pages/MoviePage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/Homepage";
 import NotFoundPage from "./pages/NotFoundPage";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
+import MovieDetailPage from "./pages/MovieDetail";
 
 const router = createBrowserRouter([
   {
@@ -13,12 +13,12 @@ const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
     children: [
       {
-        path: "login",
-        element: <Login />,
+        path: "movies/:category",
+        element: <MoviePage />,
       },
       {
-        path: "signup",
-        element: <Signup />,
+        path: "movies/:category/:id",
+        element: <MovieDetailPage />,
       },
     ],
   },
