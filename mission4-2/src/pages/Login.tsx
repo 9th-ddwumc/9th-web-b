@@ -1,0 +1,93 @@
+import { useForm } from "../hooks/useForm";
+import { useState } from "react";
+
+interface LoginFormValues {
+  email: string;
+  password: string;
+}
+
+export default function Login() {
+  const validate = (values: LoginFormValues) => {
+    const errors: Partial<LoginFormValues> = {};
+
+    if (!values.email) {
+      errors.email = "이메일을 입력해주세요.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+      errors.email = "유효하지 않은 이메일 형식입니다.";
+    }
+
+    if (!values.password) {
+      errors.password = "비밀번호를 입력해주세요.";
+    } else if (values.password.length < 6) {
+      errors.password = "비밀번호는 최소 6자 이상이어야 합니다.";
+    }
+
+    return errors;
+  };
+
+  const { values, errors, handleChange, handleSubmit } = useForm<LoginFormValues>({ email: "", password: "" }, validate);
+
+  const onSubmit = (data: LoginFormValues) => {
+    console.log("로그인 데이터:", data);
+    // 로그인 처리
+  };
+
+  // 버튼 활성화 조건
+  const isValid = !errors.email && !errors.password && values.email && values.password;
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-black">
+      <div className="w-full max-w-xs flex flex-col items-stretch gap-5">
+        <div className="relative flex items-center justify-center mb-6">
+          <div className="absolute left-0">
+            <span className="text-white text-2xl">←</span>
+          </div>
+          <h2 className="text-white text-xl font-bold text-center w-full">로그인</h2>
+        </div>
+
+        <button className="flex items-center justify-center gap-2 w-full bg-neutral-900 border border-neutral-600 rounded-md py-3 text-white text-base mb-2 hover:bg-neutral-800 transition">
+          구글 로그인
+        </button>
+
+        <div className="flex items-center my-2">
+          <div className="flex-1 h-px bg-neutral-600" />
+          <span className="mx-4 text-neutral-400 text-sm">OR</span>
+          <div className="flex-1 h-px bg-neutral-600" />
+        </div>
+
+        {/* 이메일 입력 */}
+        <input
+          type="email"
+          name="email"
+          value={values.email}
+          onChange={handleChange}
+          placeholder="이메일을 입력해주세요!"
+          className="w-full bg-neutral-900 border border-neutral-700 rounded py-3 px-4 text-white placeholder-neutral-500 outline-none"
+        />
+        {errors.email && <div className="text-red-500 mt-1 text-sm px-1">{errors.email}</div>}
+
+        {/* 비밀번호 입력 */}
+        <input
+          type="password"
+          name="password"
+          value={values.password}
+          onChange={handleChange}
+          placeholder="비밀번호를 입력해주세요!"
+          className="w-full bg-neutral-900 border border-neutral-700 rounded py-3 px-4 text-white placeholder-neutral-500 outline-none"
+        />
+        {errors.password && <div className="text-red-500 mt-1 text-sm px-1">{errors.password}</div>}
+
+        {/* 로그인 버튼: 조건부 활성화 */}
+        <button
+          className={`w-full mt-2 rounded-md py-3 font-medium transition ${
+            isValid ? "bg-neutral-800 text-white hover:bg-neutral-700 cursor-pointer" : "bg-neutral-700 text-gray-400 cursor-not-allowed"
+          }`}
+          disabled={!isValid}
+          onClick={handleSubmit(onSubmit)}
+        >
+          로그인
+        </button>
+      </div>
+    </div>
+  );
+}
