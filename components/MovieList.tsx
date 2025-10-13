@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+/*import { useEffect, useState } from "react";
 import axios from "axios";
 import type { Movie, MovieResponse } from "../types/movie";
 import MovieCard from "./MovieCard";
@@ -85,6 +85,75 @@ export default function MovieList({ endpoint, title }: MovieListProps) {
       
       <div className="grid gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 mt-6">
         {movies.map((movie) => (
+          <MovieCard key={movie.id} movie={movie} />
+        ))}
+      </div>
+    </div>
+  );
+}*/
+
+import { useState } from "react";
+import { useCustomFetch } from "../hooks/useCustomFetch";
+import type { MovieResponse } from "../types/movie";
+import MovieCard from "./MovieCard";
+import LoadingSpinner from "./LoadingSpinner";
+import ErrorMessage from "./ErrorMessage";
+import Pagination from "./Pagination";
+
+interface MovieListProps {
+  endpoint: string;
+  title: string;
+}
+
+export default function MovieList({ endpoint, title }: MovieListProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { data, isLoading, error } = useCustomFetch<MovieResponse>({
+    url: endpoint,
+    params: {
+      language: 'ko-KR',
+      page: currentPage,
+    },
+  });
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(currentPage + 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <ErrorMessage message={error} />;
+  }
+
+  if (!data || !data.results.length) {
+    return (
+      <div className="flex justify-center items-center min-h-96">
+        <p className="text-gray-500">영화 데이터가 없습니다.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-6 py-4">
+      <Pagination
+        currentPage={currentPage}
+        onPreviousPage={handlePreviousPage}
+        onNextPage={handleNextPage}
+      />
+      
+      <div className="grid gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 mt-6">
+        {data.results.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
       </div>

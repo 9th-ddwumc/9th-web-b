@@ -6,17 +6,16 @@ function App() {
 }
 
 export default App;mission01*/
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import HomePage from "./pages/HomePage";
-import PopularPage from "./pages/PopularPage";
-import TopRatedPage from "./pages/TopRatedPage";
-import UpcomingPage from "./pages/UpcomingPage";
-import NowPlayingPage from "./pages/NowPlayingPage";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
+import HomePage from './pages/HomePage';
+import PopularPage from './pages/PopularPage';
+import TopRatedPage from './pages/TopRatedPage';
+import UpcomingPage from './pages/UpcomingPage';
+import NowPlayingPage from './pages/NowPlayingPage';
+import MovieDetailPage from './pages/MovieDetailPage';
 
 function App() {
-  console.log(import.meta.env.VITE_TMDB_KEY);
-  
   return (
     <BrowserRouter>
       <Routes>
@@ -26,6 +25,7 @@ function App() {
           <Route path="top-rated" element={<TopRatedPage />} />
           <Route path="upcoming" element={<UpcomingPage />} />
           <Route path="now-playing" element={<NowPlayingPage />} />
+          <Route path="movie/:movieId" element={<MovieDetailPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
