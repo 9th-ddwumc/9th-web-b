@@ -1,5 +1,6 @@
 import { useForm } from "../hooks/useForm";
 import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
 
 interface LoginFormValues {
   email: string;
@@ -9,19 +10,17 @@ interface LoginFormValues {
 export default function Login() {
   const navigate = useNavigate();
 
-  const validate = (values: LoginFormValues) => {
+  // useCallback으로 감싸서 참조 변경 방지
+  const validate = useCallback((values: LoginFormValues) => {
     const errors: Partial<LoginFormValues> = {};
-
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
       errors.email = "유효하지 않은 이메일 형식입니다.";
     }
-
     if (values.password.length < 6) {
       errors.password = "비밀번호는 최소 6자 이상이어야 합니다.";
     }
-
     return errors;
-  };
+  }, []);
 
   const { values, errors, handleChange, handleSubmit } = useForm<LoginFormValues>({ email: "", password: "" }, validate);
 
@@ -30,7 +29,6 @@ export default function Login() {
     // 로그인 처리
   };
 
-  // 버튼 활성화 조건
   const isValid = !errors.email && !errors.password && values.email && values.password;
 
   return (
@@ -75,7 +73,6 @@ export default function Login() {
         />
         {values.password && errors.password && <div className="text-red-500 mt-1 text-sm px-1">{errors.password}</div>}
 
-        {/* 로그인 버튼: 조건부 활성화 */}
         <button
           className={`w-full mt-2 rounded-md py-3 font-medium transition ${isValid ? "bg-pink-500 text-white hover:cursor-pointer" : "bg-neutral-700 text-gray-400 cursor-not-allowed"}`}
           disabled={!isValid}
