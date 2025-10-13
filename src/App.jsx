@@ -39,6 +39,7 @@ export default <App></App>*/
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
+import SignupPage from "./pages/SignupPage.tsx";
 
 function App() {
   return (
@@ -46,9 +47,16 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginPage />} /> {/* ← 메인을 로그인으로 */}
         <Route path="/login" element={<LoginPage />} />
+
+          {/* ===== ✅ 2. 회원가입 페이지 경로를 추가합니다. ===== */}
+      <Route path="/signup" element={<SignupPage />} />
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+
+
+
+

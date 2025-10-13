@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from '../hooks/useForm';
+import { Link} from 'react-router-dom';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -44,9 +45,10 @@ const LoginPage = () => {
           <button className="bg-gray-800 px-4 py-2 rounded-md text-sm">
             로그인
           </button>
-          <button className="bg-pink-500 px-4 py-2 rounded-md text-sm">
+           {/* ===== ✅ 2. <button>을 <Link>로 변경 ===== */}
+          <Link to="/signup" className="bg-pink-500 px-4 py-2 rounded-md text-sm">
             회원가입
-          </button>
+          </Link>
         </div>
       </header>
 
