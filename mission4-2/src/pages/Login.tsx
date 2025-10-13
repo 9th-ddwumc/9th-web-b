@@ -10,15 +10,11 @@ export default function Login() {
   const validate = (values: LoginFormValues) => {
     const errors: Partial<LoginFormValues> = {};
 
-    if (!values.email) {
-      errors.email = "이메일을 입력해주세요.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
       errors.email = "유효하지 않은 이메일 형식입니다.";
     }
 
-    if (!values.password) {
-      errors.password = "비밀번호를 입력해주세요.";
-    } else if (values.password.length < 6) {
+    if (values.password.length < 6) {
       errors.password = "비밀번호는 최소 6자 이상이어야 합니다.";
     }
 
@@ -55,7 +51,6 @@ export default function Login() {
           <div className="flex-1 h-px bg-neutral-600" />
         </div>
 
-        {/* 이메일 입력 */}
         <input
           type="email"
           name="email"
@@ -64,9 +59,8 @@ export default function Login() {
           placeholder="이메일을 입력해주세요!"
           className="w-full bg-neutral-900 border border-neutral-700 rounded py-3 px-4 text-white placeholder-neutral-500 outline-none"
         />
-        {errors.email && <div className="text-red-500 mt-1 text-sm px-1">{errors.email}</div>}
+        {values.email && errors.email && <div className="text-red-500 mt-1 text-sm px-1">{errors.email}</div>}
 
-        {/* 비밀번호 입력 */}
         <input
           type="password"
           name="password"
@@ -75,13 +69,11 @@ export default function Login() {
           placeholder="비밀번호를 입력해주세요!"
           className="w-full bg-neutral-900 border border-neutral-700 rounded py-3 px-4 text-white placeholder-neutral-500 outline-none"
         />
-        {errors.password && <div className="text-red-500 mt-1 text-sm px-1">{errors.password}</div>}
+        {values.password && errors.password && <div className="text-red-500 mt-1 text-sm px-1">{errors.password}</div>}
 
         {/* 로그인 버튼: 조건부 활성화 */}
         <button
-          className={`w-full mt-2 rounded-md py-3 font-medium transition ${
-            isValid ? "bg-neutral-800 text-white hover:bg-neutral-700 cursor-pointer" : "bg-neutral-700 text-gray-400 cursor-not-allowed"
-          }`}
+          className={`w-full mt-2 rounded-md py-3 font-medium transition ${isValid ? "bg-pink-500 text-white hover:cursor-pointer" : "bg-neutral-700 text-gray-400 cursor-not-allowed"}`}
           disabled={!isValid}
           onClick={handleSubmit(onSubmit)}
         >
