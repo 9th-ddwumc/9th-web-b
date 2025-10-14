@@ -1,20 +1,20 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 
-interface UseFromProps<T> {
-  initalValue: T;
+interface UseFormProps<T> {
+  initialValue: T;
   validate: (values: T) => Record<keyof T, string>;
 }
 
 type InputElement = HTMLInputElement | HTMLTextAreaElement;
 
 function useForm<T extends Record<string, string>>({
-  initalValue,
+  initialValue,
   validate,
-}: UseFromProps<T>) {
+}: UseFormProps<T>) {
   //폼 입력 값 상태
-  const [values, setValues] = useState<T>(initalValue);
+  const [values, setValues] = useState<T>(initialValue);
   const [touched, setTouched] = useState<Record<keyof T, boolean>>(
-    Object.keys(initalValue).reduce(
+    Object.keys(initialValue).reduce(
       (acc, key) => ({
         ...acc,
         [key]: false,
@@ -25,7 +25,7 @@ function useForm<T extends Record<string, string>>({
 
   //에러 메시지 상태
   const [errors, setErrors] = useState<Record<keyof T, string>>(
-    Object.keys(initalValue).reduce(
+    Object.keys(initialValue).reduce(
       (acc, key) => ({
         ...acc,
         [key]: "",
