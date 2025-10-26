@@ -2,21 +2,25 @@ import type React from "react";
 import { useNavigate } from "react-router-dom";
 import useForm from "../hooks/useForm";
 import { type UserSignInInformation, validateSignIn } from "../utils/validator";
-import { postSignin } from "../apis/auth";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { LOCAL_STORAGE_KEYS } from "../constants";
+
+import { useAuth } from "../context/AuthContext";
+import { useEffect } from "react";
 
 const LoginPage: React.FC = () => {
+  const { login, accessToken } = useAuth();
   // 뒤로가기용 navigate
   const navigate = useNavigate();
 
-  // 토큰 저장용 훅
-  const { setItem } = useLocalStorage(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
+  useEffect(() => {
+    if (accessToken) {
+      navigate("/");
+    }
+  }, [navigate, accessToken]);
 
   // 1️⃣ useForm 훅 사용
   const { values, errors, touched, getInputProps } =
     useForm<UserSignInInformation>({
-      initalValue: {
+      initialValue: {
         email: "",
         password: "",
       },
@@ -30,18 +34,7 @@ const LoginPage: React.FC = () => {
 
   // 3️⃣ 폼 제출 핸들러
   const handleSubmit = async () => {
-    try {
-      const response = await postSignin(values);
-      const accessToken = response.data.accessToken;
-
-      // accessToken을 로컬스토리지에 저장
-      setItem(accessToken);
-
-      // 로그인 성공 후 페이지 이동
-      navigate("/home");
-    } catch (error) {
-      console.error("로그인 실패: ", error);
-    }
+    await login(values);
   };
 
   // 4️⃣ 렌더링

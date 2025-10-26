@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { LOCAL_STORAGE_KEYS } from "../constants";
+import { LOCAL_STORAGE_KEYS } from "../constants/key";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_API_URL,
@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use(
     const token = getItem();
     if (token) {
       //토큰이 있을 경우 헤더에 Authorization 추가
-      config.headers.Authorization = `Bearer ${token};`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },

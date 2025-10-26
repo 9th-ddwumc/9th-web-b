@@ -1,4 +1,4 @@
-import { LOCAL_STORAGE_KEYS } from "../constants";
+import { LOCAL_STORAGE_KEYS } from "../constants/key";
 
 // ✅ LOCAL_STORAGE_KEYS의 value("accessToken") 타입을 허용하도록 변경
 type LocalStorageValue =

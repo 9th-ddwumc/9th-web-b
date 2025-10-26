@@ -28,3 +28,8 @@ export const getMyInfo = async (): Promise<ResponseMyInfo> => {
   const { data } = await axiosInstance.get("/v1/users/me");
   return data;
 };
+
+export const postLogout = async () => {
+  const { data } = await axiosInstance.post("/v1/auth/signout");
+  return data;
+};
