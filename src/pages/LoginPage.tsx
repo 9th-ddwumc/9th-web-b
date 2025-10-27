@@ -1,9 +1,16 @@
 import { validateSignin, type UserSigninInformation } from '../utils/validate.ts';
 import useForm from '../hooks/useForm';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.tsx';
+import { useState } from 'react';
+import { postSignin } from '../apis/auth.ts';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
   const {values, errors, touched, getInputProps} = useForm<UserSigninInformation>({
     initialValue: {
       email: "",
@@ -12,8 +19,27 @@ const LoginPage = () => {
     validate: validateSignin,
   });
 
-  const handleSubmit = () => {
-    console.log("values:", values);
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    setErrorMessage('');
+
+    try {
+      const response = await postSignin({
+        email: values.email,
+        password: values.password,
+      });
+
+      // 토큰 저장
+      login(response.data.accessToken);
+      
+      // 로그인 성공 후 홈으로 이동
+      navigate('/');
+    } catch (error) {
+      console.error('로그인 에러:', error);
+      setErrorMessage('이메일 또는 비밀번호가 올바르지 않습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -26,7 +52,7 @@ const LoginPage = () => {
     Object.values(values).some((value: string) => value === "");
 
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-4 -mt-30">
+    <div className="flex flex-col items-center justify-center min-h-screen gap-4 pt-24">
       <div className="flex items-center justify-center w-[300px] relative mb-6">
         <button 
           type="button"
@@ -39,6 +65,13 @@ const LoginPage = () => {
       </div>
 
       <div className="flex flex-col gap-3 w-[300px]">
+        {/* 에러 메시지 */}
+        {errorMessage && (
+          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
+            {errorMessage}
+          </div>
+        )}
+
         {/* 구글 로그인 버튼 */}
         <button
           type="button"
@@ -93,11 +126,11 @@ const LoginPage = () => {
         <button
           type='button'
           onClick={handleSubmit}
-          disabled={isDisabled}
+          disabled={isDisabled || isLoading}
           className="w-full bg-pink-400 text-white py-3 rounded-md text-base font-medium
           hover:bg-pink-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
-          로그인
+          {isLoading ? '로그인 중...' : '로그인'}
         </button>
       </div>
     </div>
