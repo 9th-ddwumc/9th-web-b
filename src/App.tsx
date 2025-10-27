@@ -6,7 +6,9 @@ import HomePage from './pages/HomePage.tsx';
 import HomeLayout from './layouts/HomeLayout.tsx';
 import SignupPage from './pages/SignupPage.tsx';
 import ProtectedLayout from './layouts/ProtectedLayout.tsx';
-import MyPage from './pages/MyPage.tsx';  // 🆕 추가
+import MyPage from './pages/MyPage.tsx';  
+import GoogleCallbackPage from './pages/GoogleCallbackPage.tsx'; 
+
 
 const router = createBrowserRouter([
   {
@@ -17,15 +19,18 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "login", element: <LoginPage /> },
       { path: "signup", element: <SignupPage /> },
-      
       // 🔒 보호된 라우트들
       {
         element: <ProtectedLayout />,
         children: [
-          { path: "mypage", element: <MyPage /> },  // 🆕 추가
+          { path: "mypage", element: <MyPage /> }, 
         ],
       },
     ],
+  },
+  {
+    path: "/v1/auth/google/callback",
+    element: <GoogleCallbackPage />,
   },
 ]);
 

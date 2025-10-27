@@ -45,6 +45,7 @@ const LoginPage = () => {
   const handleGoogleLogin = () => {
     // 구글 로그인 로직
     console.log("구글 로그인");
+    window.location.href = `${import.meta.env.VITE_SERVER_API_URL}/v1/auth/google/login`;
   };
 
   const isDisabled: boolean =
