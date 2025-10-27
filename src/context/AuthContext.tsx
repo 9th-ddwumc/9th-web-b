@@ -1,12 +1,13 @@
 // src/context/AuthContext.tsx
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { LOCAL_STORAGE_KEY } from '../constants/key';
+import { LOCAL_STORAGE_KEY } from '../constants/key.ts';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: (token: string) => void;
+  login: (accessToken: string, refreshToken: string) => void;
   logout: () => void;
   getToken: () => string | null;
+  getRefreshToken: () => string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,19 +15,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  // 컴포넌트 마운트 시 토큰 확인
   useEffect(() => {
     const token = localStorage.getItem(LOCAL_STORAGE_KEY.accessToken);
     setIsAuthenticated(!!token);
   }, []);
 
-  const login = (token: string) => {
-    localStorage.setItem(LOCAL_STORAGE_KEY.accessToken, token);
+  const login = (accessToken: string, refreshToken: string) => {
+    localStorage.setItem(LOCAL_STORAGE_KEY.accessToken, accessToken);
+    localStorage.setItem(LOCAL_STORAGE_KEY.refreshToken, refreshToken);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
     localStorage.removeItem(LOCAL_STORAGE_KEY.accessToken);
+    localStorage.removeItem(LOCAL_STORAGE_KEY.refreshToken);
     setIsAuthenticated(false);
   };
 
@@ -34,14 +36,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return localStorage.getItem(LOCAL_STORAGE_KEY.accessToken);
   };
 
+  const getRefreshToken = () => {
+    return localStorage.getItem(LOCAL_STORAGE_KEY.refreshToken);
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, getToken }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, getToken, getRefreshToken }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom Hook
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

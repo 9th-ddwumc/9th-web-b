@@ -19,3 +19,10 @@ export const getMyInfo = async (): Promise<ResponseMyInfoDto> => {
   const { data } = await axiosInstance.get("/v1/users/me");
   return data;
 };
+
+export const postRefresh = async (refreshToken: string): Promise<ResponseSigninDto> => {
+  const { data } = await axiosInstance.post("/v1/auth/refresh", {
+    refresh: refreshToken,
+  });
+  return data;
+};

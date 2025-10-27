@@ -1,3 +1,4 @@
+// src/types/auth.ts
 import type { CommonResponse } from "./common.ts";
 
 // 회원가입
@@ -29,7 +30,7 @@ export type ResponseSigninDto = CommonResponse<{
   id: number;
   name: string;
   accessToken: string;
-  refreshToken: string;
+  refreshToken: string; 
 }>;
 
 // 내 정보 조회

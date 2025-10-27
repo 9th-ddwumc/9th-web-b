@@ -30,7 +30,7 @@ const LoginPage = () => {
       });
 
       // 토큰 저장
-      login(response.data.accessToken);
+      login(response.data.accessToken, response.data.refreshToken);
       
       // 로그인 성공 후 홈으로 이동
       navigate('/');
