@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 
 // 폼 값의 타입을 제네릭으로 받음
-type FormValues = Record<string, string>;
+type FormValues = Record<string, any>;
 
 // 유효성 검사 함수 타입
 type ValidateFunction<T extends FormValues> = (values: T) => Partial<Record<keyof T, string>>;

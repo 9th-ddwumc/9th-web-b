@@ -4,6 +4,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "../api/axiosInstance";
 
 interface FormValues {
   email: string;
@@ -74,13 +75,18 @@ export default function Signup() {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const fakeToken = `fake-jwt-token-${Date.now()}`;
-      console.log("Saving token:", fakeToken);
-      setToken(fakeToken);
-      localStorage.setItem("nickname", data.nickname);
-      navigate(`/`);
+      await axios.post("/auth/signup", {
+        name: data.nickname,
+        email: data.email,
+        bio: "",
+        avatar: "https://avatars.githubusercontent.com/u/55682610?v=4",
+        password: data.password,
+      });
+      alert("회원가입 성공! 로그인 페이지로 이동합니다.");
+      navigate("/login");
     } catch (error) {
-      console.error("Signup failed:", error);
+      console.error("회원가입 실패:", error);
+      alert("회원가입에 실패했습니다.");
     }
   };
 
