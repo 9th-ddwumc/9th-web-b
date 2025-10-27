@@ -1,7 +1,7 @@
 import { useForm } from "../hooks/useForm";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
-import axios from "../api/axiosInstance";
+import axiosInstance from "../api/axiosInstance";
 
 interface LoginFormValues {
   email: string;
@@ -11,7 +11,7 @@ interface LoginFormValues {
 export default function Login() {
   const navigate = useNavigate();
 
-  // useCallback으로 감싸서 참조 변경 방지
+  // 이메일/비밀번호 검증 함수
   const validate = useCallback((values: LoginFormValues) => {
     const errors: Partial<LoginFormValues> = {};
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
@@ -25,18 +25,24 @@ export default function Login() {
 
   const { values, errors, handleChange, handleSubmit } = useForm<LoginFormValues>({ email: "", password: "" }, validate);
 
+  // 이메일/비밀번호 로그인 처리
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const res = await axios.post("/auth/signin", data);
+      const res = await axiosInstance.post("/auth/signin", data);
       console.log("로그인 토큰:", res.data.data.accessToken);
       localStorage.setItem("accessToken", res.data.data.accessToken);
       localStorage.setItem("refreshToken", res.data.data.refreshToken);
       alert("로그인 성공!");
-      navigate("/mypage"); // 보호된 페이지로 이동
+      navigate("/mypage");
     } catch (error) {
       console.error("로그인 실패:", error);
       alert("로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.");
     }
+  };
+
+  // 구글 로그인 버튼 클릭 시
+  const handleGoogleLogin = () => {
+    window.location.href = import.meta.env.VITE_SERVER_API_URL + "/v1/auth/google/login";
   };
 
   const isValid = !errors.email && !errors.password && values.email && values.password;
@@ -53,8 +59,9 @@ export default function Login() {
           <h2 className="text-white text-xl font-bold text-center w-full">로그인</h2>
         </div>
 
-        <button className="flex items-center justify-center gap-2 w-full bg-neutral-900 border border-neutral-600 rounded-md py-3 text-white text-base mb-2 hover:bg-neutral-800 transition">
-          구글 로그인
+        {/* 🔹 Google 로그인 버튼 (리디렉션 방식) */}
+        <button onClick={handleGoogleLogin} className="bg-red-500 hover:bg-red-600 text-white py-3 rounded-md font-medium transition">
+          Google로 로그인
         </button>
 
         <div className="flex items-center my-2">

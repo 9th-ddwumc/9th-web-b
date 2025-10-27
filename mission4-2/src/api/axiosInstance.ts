@@ -18,6 +18,8 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
+    console.error("Axios 인터셉터 에러 응답:", error.response); // 에러 응답 로깅
+
     const originalRequest = error.config;
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -27,7 +29,7 @@ axiosInstance.interceptors.response.use(
         const newAccessToken = res.data.data.accessToken;
         localStorage.setItem("accessToken", newAccessToken);
 
-        console.log("토큰 재발급 성공:", newAccessToken); // 여기서 로그 출력
+        console.log("토큰 재발급 성공:", newAccessToken); // 토큰 재발급 성공 로그
 
         originalRequest.headers = {
           ...originalRequest.headers,
