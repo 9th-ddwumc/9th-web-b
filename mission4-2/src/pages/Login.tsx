@@ -27,8 +27,9 @@ export default function Login() {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const res = await axios.post("/auth/signin", data); // 백엔드 로그인 API 호출
-      localStorage.setItem("accessToken", res.data.accessToken); // 토큰 저장
+      const res = await axios.post("/auth/signin", data);
+      console.log("로그인 토큰:", res.data.data.accessToken);
+      localStorage.setItem("accessToken", res.data.data.accessToken);
       alert("로그인 성공!");
       navigate("/mypage"); // 보호된 페이지로 이동
     } catch (error) {
