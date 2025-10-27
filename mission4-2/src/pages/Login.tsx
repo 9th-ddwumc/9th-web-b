@@ -30,6 +30,7 @@ export default function Login() {
       const res = await axios.post("/auth/signin", data);
       console.log("로그인 토큰:", res.data.data.accessToken);
       localStorage.setItem("accessToken", res.data.data.accessToken);
+      localStorage.setItem("refreshToken", res.data.data.refreshToken);
       alert("로그인 성공!");
       navigate("/mypage"); // 보호된 페이지로 이동
     } catch (error) {
