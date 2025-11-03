@@ -13,10 +13,12 @@
     "@hookform/resolvers": "^5.2.2",
     "@react-oauth/google": "^0.12.2",
     "@tailwindcss/vite": "^4.1.14",
+    "@tanstack/react-query-devtools": "^5.90.2",
     "axios": "^1.12.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.65.0",
+    "react-intersection-observer": "^10.0.0",
     "react-router-dom": "^7.9.4",
     "tailwindcss": "^4.1.14",
     "zod": "^4.1.12"

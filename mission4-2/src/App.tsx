@@ -1,41 +1,38 @@
-import { useState } from "react";
-import ProtectedRoute from "./protectRoute";
-import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/Homepage";
-import NotFoundPage from "./pages/NotFoundPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import My from "./pages/Mypages";
+import ProtectedRoute from "./protectedRoute";
+import NotFoundPage from "./pages/NotFoundPage";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <HomePage />,
-    errorElement: <NotFoundPage />,
-    children: [
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "signup",
-        element: <Signup />,
-      },
-      {
-        path: "mypage",
-        element: (
-          <ProtectedRoute>
-            <My />
-          </ProtectedRoute>
-        ),
-      },
-    ],
-  },
-]);
+import Layout from "./components/Layout";
+import DetailPage from "./pages/DetailPage";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
-  return <RouterProvider router={router}></RouterProvider>;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<HomePage />} />
+          <Route path="login" element={<Login />} />
+          <Route path="signup" element={<Signup />} />
+          <Route
+            path="mypage"
+            element={
+              <ProtectedRoute>
+                <My />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="lp/:lpid" element={<DetailPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;

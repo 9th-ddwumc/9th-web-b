@@ -32,8 +32,9 @@ export default function Login() {
       console.log("로그인 토큰:", res.data.data.accessToken);
       localStorage.setItem("accessToken", res.data.data.accessToken);
       localStorage.setItem("refreshToken", res.data.data.refreshToken);
+      localStorage.setItem("userName", res.data.data.name);
       alert("로그인 성공!");
-      navigate("/mypage");
+      navigate("/");
     } catch (error) {
       console.error("로그인 실패:", error);
       alert("로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.");
@@ -59,7 +60,7 @@ export default function Login() {
           <h2 className="text-white text-xl font-bold text-center w-full">로그인</h2>
         </div>
 
-        {/* 🔹 Google 로그인 버튼 (리디렉션 방식) */}
+        {/* Google 로그인 버튼 (리디렉션 방식) */}
         <button onClick={handleGoogleLogin} className="bg-red-500 hover:bg-red-600 text-white py-3 rounded-md font-medium transition">
           Google로 로그인
         </button>
