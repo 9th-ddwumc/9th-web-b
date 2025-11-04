@@ -1,5 +1,13 @@
+import type {
+  RequestSigninDto,
+  RequestSignupDto,
+  ResponseMyInfoDto,
+  ResponseSigninDto,
+  ResponseSignupDto,
+  UpdateMyInfoDto, // 추가
+} from "../types/auth";
+import type { CommonResponse } from "../types/common";
 import { axiosInstance } from "./axios";
-import type { RequestSigninDto, RequestSignupDto, ResponseMyInfoDto, ResponseSigninDto, ResponseSignupDto } from "../types/auth";
 
 export const postSignup = async (
   body: RequestSignupDto
@@ -16,13 +24,26 @@ export const postSignin = async (
 };
 
 export const getMyInfo = async (): Promise<ResponseMyInfoDto> => {
-  const { data } = await axiosInstance.get("/v1/users/me");
+  const token = localStorage.getItem("accessToken");
+  console.log("꺼낸 토큰:", token);
+
+  const { data } = await axiosInstance.get("/v1/users/me", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return data;
 };
 
-export const postRefresh = async (refreshToken: string): Promise<ResponseSigninDto> => {
-  const { data } = await axiosInstance.post("/v1/auth/refresh", {
-    refresh: refreshToken,
-  });
+// 추가: 내 정보 수정
+export const patchMyInfo = async (
+  body: UpdateMyInfoDto
+): Promise<ResponseMyInfoDto> => {
+  const { data } = await axiosInstance.patch("/v1/users/me", body);
+  return data;
+};
+
+export const postLogout = async (): Promise<CommonResponse<null>> => {
+  const { data } = await axiosInstance.post("/v1/auth/signout");
   return data;
 };

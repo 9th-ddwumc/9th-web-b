@@ -1,11 +1,7 @@
 export const useLocalStorage = (key: string) => {
-  const setItem = (value: unknown) => {
+  const setItem = (value: string) => {
     try {
-      // 문자열이면 그대로, 객체면 JSON.stringify
-      const valueToStore = typeof value === 'string' 
-        ? value 
-        : JSON.stringify(value);
-      window.localStorage.setItem(key, valueToStore);
+      window.localStorage.setItem(key, value);
     } catch (error) {
       console.log(error);
     }
@@ -14,15 +10,10 @@ export const useLocalStorage = (key: string) => {
   const getItem = () => {
     try {
       const item = window.localStorage.getItem(key);
-      if (!item) return null;
 
-      try {
-        return JSON.parse(item);
-      } catch {
-        return item;
-      }
-    } catch (error) {
-      console.log(error);
+      return item;
+    } catch (e) {
+      console.log(e);
       return null;
     }
   };

@@ -1,63 +1,86 @@
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.tsx';
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useEffect } from "react";
+import { getMyInfo } from "../apis/auth";
+import useLogout from "../hooks/mutations/useLogout";
 
-export const Navbar = () => {
+const Navbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { mutate: logout } = useLogout();
+  const { accessToken, user, setUser } = useAuth();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (accessToken) {
+        const res = await getMyInfo();
+        setUser(res); // 전역 상태에 저장
+      }
+    };
+    fetchData();
+  }, [accessToken]);
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   return (
-    <div className='flex items-center justify-end gap-3 px-6 py-4 border-b'>
-      <button
-        type='button'
-        onClick={() => navigate('/')}
-        className='text-xl font-bold text-transparent bg-clip-text bg-pink-600 hover:from-pink-500 hover:to-purple-600 transition-all absolute left-6'
-      >
-        돌려돌려애득!
-      </button>
-      
-      {/* 마이페이지 버튼 - 항상 표시 */}
-      <button 
-        type='button'
-        className='px-5 py-2 text-sm font-medium border border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-all'
-        onClick={() => navigate('/mypage')}
-      >
-        마이페이지
-      </button>
-
-      {/* 로그인 상태에 따라 다른 버튼 표시 */}
-      {isAuthenticated ? (
-        // 로그인 상태 - 로그아웃 버튼
-        <button 
-          type='button'
-          className='px-5 py-2 text-sm font-medium text-white bg-pink-400 rounded-lg hover:bg-pink-500 transition-all'
-          onClick={handleLogout}
+    <div className="flex justify-between items-center px-5 py-3 h-15 bg-[#212121]">
+      <div className="flex items-center gap-4">
+        <button
+          onClick={toggleSidebar}
+          className="text-white text-3xl hover:cursor-pointer"
         >
-          로그아웃
+          ≡
         </button>
-      ) : (
-        // 로그아웃 상태 - 로그인, 회원가입 버튼
-        <>
-          <button 
-            type='button'
-            className='px-5 py-2 text-sm font-medium text-white bg-pink-400 rounded-lg hover:bg-pink-500 transition-all'
-            onClick={() => navigate('/login')}
-          >
-            로그인
-          </button>
-          <button 
-            type='button'
-            className='px-5 py-2 text-sm font-medium border border-pink-400 text-pink-400 rounded-lg hover:bg-pink-50 transition-all'
-            onClick={() => navigate('/signup')}
-          >
-            회원가입
-          </button>
-        </>
-      )}
+        <button
+          onClick={() => navigate("")}
+          className="text-2xl font-bold text-pink-600 cursor-pointer "
+        >
+          돌려돌려 애득!
+        </button>
+      </div>
+      <div className="flex gap-3">
+        <button className="py-2 hover:cursor-pointer">
+          <img
+            src="https://www.citypng.com/public/uploads/preview/white-search-icon-button-png-img-735811696240431a0p3ex0i2v.png"
+            alt="검색"
+            className="w-5 h-5 inline-block mr-2"
+          />
+        </button>
+        {!accessToken && (
+          <>
+            <button
+              onClick={() => navigate("login")}
+              className="px-4 py-2 hover:bg-pink-500 text-white bg-gray-700 rounded-md cursor-pointer"
+            >
+              로그인
+            </button>
+            <button
+              onClick={() => navigate("signup")}
+              className="px-4 py-2 hover:bg-pink-500 text-white bg-gray-700 rounded-md cursor-pointer"
+            >
+              회원가입
+            </button>
+          </>
+        )}
+
+        {accessToken && (
+          <>
+            <p className="pt-2 pr-2 text-white">
+              {user?.data.name}님 반갑습니다.
+            </p>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 hover:bg-pink-500 text-white bg-[#212121] rounded-md cursor-pointer"
+            >
+              로그아웃
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default Navbar;

@@ -1,57 +1,94 @@
-// src/context/AuthContext.tsx
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { LOCAL_STORAGE_KEY } from '../constants/key.ts';
+// context/AuthContext.tsx
+import { createContext, useContext, useState } from "react";
+import type { PropsWithChildren } from "react";
+
+import type { RequestSigninDto, ResponseMyInfoDto } from "../types/auth";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { LOCAL_STORAGE_KEY } from "../constants/key";
+import { postLogout, postSignin, getMyInfo } from "../apis/auth";
 
 interface AuthContextType {
-  isAuthenticated: boolean;
-  login: (accessToken: string, refreshToken: string) => void;
-  logout: () => void;
-  getToken: () => string | null;
-  getRefreshToken: () => string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  user: ResponseMyInfoDto | null;
+  // setUser: (user: ResponseMyInfoDto | null) => void;
+  setUser: React.Dispatch<React.SetStateAction<ResponseMyInfoDto | null>>;
+
+  login: (siginData: RequestSigninDto) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType>(
+  {} as AuthContextType
+);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+export const AuthProvider = ({ children }: PropsWithChildren) => {
+  const {
+    getItem: getAccessTokenFromStorage,
+    setItem: setAccessTokenInStorage,
+    removeItem: removeAccessTokenFromStorage,
+  } = useLocalStorage(LOCAL_STORAGE_KEY.accessToken);
+  const {
+    getItem: getRefreshTokenFromStorage,
+    setItem: setRefreshTokenInStorage,
+    removeItem: removeRefreshokenFromStorage,
+  } = useLocalStorage(LOCAL_STORAGE_KEY.refreshToken);
 
-  useEffect(() => {
-    const token = localStorage.getItem(LOCAL_STORAGE_KEY.accessToken);
-    setIsAuthenticated(!!token);
-  }, []);
+  const [accessToken, setAccessToken] = useState(getAccessTokenFromStorage());
+  const [refreshToken, setRefreshToken] = useState(
+    getRefreshTokenFromStorage()
+  );
+  const [user, setUser] = useState<ResponseMyInfoDto | null>(null);
 
-  const login = (accessToken: string, refreshToken: string) => {
-    localStorage.setItem(LOCAL_STORAGE_KEY.accessToken, accessToken);
-    localStorage.setItem(LOCAL_STORAGE_KEY.refreshToken, refreshToken);
-    setIsAuthenticated(true);
+  const login = async (signinData: RequestSigninDto) => {
+    try {
+      const { data } = await postSignin(signinData);
+      if (data) {
+        setAccessTokenInStorage(data.accessToken);
+        setRefreshTokenInStorage(data.refreshToken);
+        setAccessToken(data.accessToken);
+        setRefreshToken(data.refreshToken);
+
+        const userInfo = await getMyInfo();
+        setUser(userInfo);
+
+        alert("로그인 성공");
+        window.location.href = "/mypage";
+      }
+    } catch (error) {
+      console.log("로그인 오류", error);
+      alert("로그인 실패");
+    }
   };
 
-  const logout = () => {
-    localStorage.removeItem(LOCAL_STORAGE_KEY.accessToken);
-    localStorage.removeItem(LOCAL_STORAGE_KEY.refreshToken);
-    setIsAuthenticated(false);
-  };
-
-  const getToken = () => {
-    return localStorage.getItem(LOCAL_STORAGE_KEY.accessToken);
-  };
-
-  const getRefreshToken = () => {
-    return localStorage.getItem(LOCAL_STORAGE_KEY.refreshToken);
+  const logout = async () => {
+    try {
+      await postLogout();
+      removeAccessTokenFromStorage();
+      removeRefreshokenFromStorage();
+      setAccessToken(null);
+      setRefreshToken(null);
+      setUser(null);
+      alert("로그아웃 성공");
+    } catch (error) {
+      console.error("로그아웃 오류", error);
+      alert("로그아웃 실패");
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, getToken, getRefreshToken }}>
+    <AuthContext.Provider
+      value={{ accessToken, refreshToken, login, logout, user, setUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth는 AuthProvider 내부에서 사용되어야 합니다.');
+    throw new Error("AuthContext를 찾을 수 없습니다");
   }
   return context;
 };

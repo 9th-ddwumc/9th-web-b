@@ -1,5 +1,5 @@
 // src/types/auth.ts
-import type { CommonResponse } from "./common.ts";
+import type { CommonResponse } from "./common";
 
 // 회원가입
 export type RequestSignupDto = {
@@ -43,3 +43,9 @@ export type ResponseMyInfoDto = CommonResponse<{
   createAt: Date;
   updateAt: Date;
 }>;
+
+export type UpdateMyInfoDto = {
+  name: string;
+  bio: string;
+  avatar?: string;
+};
