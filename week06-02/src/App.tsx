@@ -10,6 +10,7 @@ import LoginPage from "./pages/LoginPage";
 import HomeLayout from "./layouts/HomeLayout";
 import SignupPage from "./pages/SignupPage";
 import MyPage from "./pages/Mypage";
+import LpDetailPage from "./pages/LpDetailPage";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import GooleLoginRedirectPage from "./pages/GoogleLoginRedirectPage";
@@ -26,6 +27,7 @@ const publicRoutes: RouteObject[] = [
       { path: "login", element: <LoginPage /> },
       { path: "signup", element: <SignupPage /> },
       { path: "/v1/auth/google/callback", element: <GooleLoginRedirectPage /> },
+      { path: "lp/:lpId", element: <LpDetailPage /> },
     ],
   },
 ];

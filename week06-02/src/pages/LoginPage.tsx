@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
     }
   }, [navigate, accessToken]);
 
-  const handleGoggleLogin = () => {
+  const handleGoogleLogin = () => {
     window.location.href =
       import.meta.env.VITE_SERVER_API_URL + "/v1/auth/google/login";
   };
@@ -57,7 +57,7 @@ const LoginPage: React.FC = () => {
       {/* 로그인 폼 */}
       <div className="flex flex-col gap-3">
         <div
-          onClick={handleGoggleLogin}
+          onClick={handleGoogleLogin}
           className="flex items-center justify-center gap-4 border border-black w-[300px] p-[10px] rounded-sm"
         >
           <img src="/images/google.svg" alt="구글 로고 이미지" />

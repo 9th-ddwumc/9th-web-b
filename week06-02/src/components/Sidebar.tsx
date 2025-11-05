@@ -6,9 +6,9 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* ☰ 햄버거 버튼 (항상 보임) */}
+      {/* ☰ 햄버거 버튼 */}
       <button
-        className="fixed top-3.5 left-4 z-[9999] text-white text-2xl"
+        className="absolute top-3.5 left-4 z-[9999] text-white text-2xl"
         onClick={() => setIsOpen(!isOpen)}
       >
         <svg
@@ -30,32 +30,47 @@ const Sidebar = () => {
 
       {/* 사이드바 */}
       <div
-        className={`bg-gray-900 h-full w-60 fixed lg:static top-0 left-0 flex flex-col transform transition-transform duration-300 z-40
+        className={`bg-gray-900 w-60 h-screen fixed lg:static top-0 left-0 flex flex-col justify-between transform transition-transform duration-300 z-40 will-change-transform
         ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
-        {/* ✅ 상단 메뉴 — 햄버거 밑으로 내림 */}
-        <div className="flex flex-col space-y-4 text-gray-300 flex-1 p-4 mt-16 lg:mt-3">
-          <Link to="#" onClick={() => setIsOpen(false)}>
-            찾기
-          </Link>
-          <Link to="/my" onClick={() => setIsOpen(false)}>
-            마이페이지
-          </Link>
-        </div>
-
-        {/* 하단 고정 메뉴 */}
-        <div className="mt-auto text-center">
+        {/* ✅ 상단 메뉴 (항상 보이는 영역) */}
+        <div className="p-6 text-gray-300 space-y-4">
           <Link
             to="#"
             onClick={() => setIsOpen(false)}
-            className="text-red-400 hover:text-red-500 text-center"
+            className="block hover:text-pink-400"
+          >
+            찾기
+          </Link>
+          <Link
+            to="/my"
+            onClick={() => setIsOpen(false)}
+            className="block hover:text-pink-400"
+          >
+            마이페이지
+          </Link>
+          <Link
+            to="/setting"
+            onClick={() => setIsOpen(false)}
+            className="block hover:text-pink-400"
+          >
+            설정
+          </Link>
+        </div>
+
+        {/* ✅ 하단 고정 */}
+        <div className="p-4 border-t border-gray-700 text-center">
+          <Link
+            to="#"
+            onClick={() => setIsOpen(false)}
+            className="text-red-400 hover:text-red-500"
           >
             탈퇴하기
           </Link>
         </div>
       </div>
 
-      {/* 배경 오버레이 (모바일에서만 보임) */}
+      {/* ✅ 배경 오버레이 (모바일에서만 보임) */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-30"
