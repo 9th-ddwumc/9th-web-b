@@ -45,3 +45,17 @@ export type ResponseLpCommentsDto = CursorBasedResponse<{
   nextCursor: number | null;
   hasNext: boolean;
 }>;
+
+export interface RequestLpDto {
+  lpId: number;
+}
+
+export interface ResponseLikeLpDto {
+  success: boolean;
+  message?: string;
+  data?: {
+    lpId: number;
+    liked: boolean;
+    likeCount: number;
+  };
+}

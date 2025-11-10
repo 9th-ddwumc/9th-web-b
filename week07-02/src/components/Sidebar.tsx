@@ -1,15 +1,14 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { deleteUser } from "../apis/user"; // ✅ 추가
-import { useAuth } from "../context/AuthContext"; // ✅ 추가
+import { deleteUser } from "../apis/user";
+import { useAuth } from "../context/AuthContext";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [showModal, setShowModal] = useState(false); // ✅ 모달 상태
+  const [showModal, setShowModal] = useState(false);
   const { logout } = useAuth();
 
-  // ✅ 탈퇴 mutation
   const deleteMutation = useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
@@ -30,14 +29,14 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* ☰ 햄버거 버튼 */}
+      {/* ☰ 햄버거 버튼 (항상 보이게) */}
       <button
-        className="absolute top-3.5 left-4 z-[9999] text-white text-2xl"
-        onClick={() => setIsOpen(!isOpen)}
+        className="fixed top-3 left-3 z-[10001] text-white text-2xl rounded-md p-1 hover:bg-gray-700 transition"
+        onClick={() => setIsOpen((prev) => !prev)}
       >
         <svg
-          width="33"
-          height="33"
+          width="30"
+          height="30"
           viewBox="0 0 48 48"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -52,58 +51,57 @@ const Sidebar = () => {
         </svg>
       </button>
 
-      {/* 사이드바 */}
-      <div
-        className={`bg-gray-900 w-60 h-full fixed lg:static top-0 left-0 flex flex-col justify-between overflow-y-auto transform transition-transform duration-300 z-40
+      {/* ✅ 사이드바 */}
+      <aside
+        className={`bg-gray-900 h-full w-60 fixed lg:static top-0 left-0 flex flex-col justify-between 
+        transform transition-transform duration-300 z-[10000]
         ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
-        {/* 상단 메뉴 */}
-        <div className="p-6 text-gray-300 space-y-4">
-          <Link
-            to="#"
-            onClick={() => setIsOpen(false)}
-            className="block hover:text-pink-400"
-          >
-            찾기
-          </Link>
-          <Link
-            to="/my"
-            onClick={() => setIsOpen(false)}
-            className="block hover:text-pink-400"
-          >
-            마이페이지
-          </Link>
-          <Link
-            to="/setting"
-            onClick={() => setIsOpen(false)}
-            className="block hover:text-pink-400"
-          >
-            설정
-          </Link>
+        <div className="p-6 text-gray-300 space-y-4 flex flex-col h-full justify-between">
+          <div className="space-y-4">
+            <Link
+              to="#"
+              onClick={() => setIsOpen(false)}
+              className="mt-10 block hover:text-pink-400"
+            >
+              찾기
+            </Link>
+            <Link
+              to="/my"
+              onClick={() => setIsOpen(false)}
+              className="block hover:text-pink-400"
+            >
+              마이페이지
+            </Link>
+            <Link
+              to="/my"
+              onClick={() => setIsOpen(false)}
+              className="block hover:text-pink-400"
+            >
+              설정
+            </Link>
+            <hr className="border-gray-700 mt-95 mb-4" />
+            <button
+              onClick={() => setShowModal(true)}
+              className="block text-red-400 hover:text-red-500 w-full text-left font-semibold"
+            >
+              탈퇴하기
+            </button>
+          </div>
         </div>
+      </aside>
 
-        {/* 하단 고정 버튼 */}
-        <div className="p-4 border-t border-gray-700 text-center mt-auto">
-          <button
-            onClick={() => setShowModal(true)}
-            className="text-red-400 hover:text-red-500 w-full"
-          >
-            탈퇴하기
-          </button>
-        </div>
-      </div>
-
-      {/* 배경 오버레이 (모바일) */}
+      {/* ✅ 배경 오버레이 (모바일 전용) */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-30"
+          className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-[9999]"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* ✅ 탈퇴 확인 모달 */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10002]">
           <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center text-white w-80">
             <h2 className="text-lg font-semibold mb-4">
               정말 탈퇴하시겠습니까?

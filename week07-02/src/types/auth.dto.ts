@@ -7,7 +7,7 @@ export type UserInfo = {
   bio: string | null;
   avatar: string | null;
   createdAt: Date;
-  updateAt: Date;
+  updatedAt: Date;
 };
 
 //회원가입 요청 DTO
