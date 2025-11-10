@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getLPDetail } from "../api/lp";
 import React from "react";
+import { getLPDetail } from "../api/lp";
+import CommentSection from "../components/comments/CommentList";
 
 type Tag = { id: number; name: string };
 type Author = { name: string; profileImage?: string; avatar?: string };
@@ -20,7 +21,7 @@ const DetailPage: React.FC = () => {
   const { lpid } = useParams<{ lpid: string }>();
   const navigate = useNavigate();
 
-  // 인증 여부 확인 (토큰 기준)
+  // ✅ 로그인 여부 확인
   const isAuth = Boolean(localStorage.getItem("accessToken"));
 
   React.useEffect(() => {
@@ -30,10 +31,10 @@ const DetailPage: React.FC = () => {
     }
   }, [isAuth, navigate]);
 
-  // 쿼리 실행은 로그인 사용자만
+  // ✅ LP 상세 데이터 조회
   const {
     data: queryData,
-    isLoading,
+    isPending,
     isError,
   } = useQuery<{ status: boolean; statusCode: number; message: string; data: LPDetail }>({
     queryKey: ["lp", lpid],
@@ -43,20 +44,15 @@ const DetailPage: React.FC = () => {
 
   const data = queryData?.data;
 
-  React.useEffect(() => {
-    if (data) {
-      console.log("LPDetail JSON:", JSON.stringify(data, null, 2));
-    }
-  }, [data]);
-
-  if (!isAuth) return null; // 경고창과 라우팅 후 더 이상 DetailPage 렌더 X
-
-  if (isLoading) return <div className="mt-20 text-white">Loading...</div>;
+  if (!isAuth) return null;
+  if (isPending) return <div className="mt-20 text-white">Loading...</div>;
   if (isError || !data) return <div className="mt-20 text-white">Error...</div>;
 
   return (
-    <div className="min-h-screen bg-black flex justify-center py-16">
-      <div className="bg-neutral-900 rounded-2xl p-10 shadow-lg w-full max-w-2xl flex flex-col items-center">
+    <div className="min-h-screen bg-black flex flex-col justify-center py-16">
+      {/* LP 상세 카드 */}
+      <div className="bg-neutral-900 rounded-2xl p-10 shadow-lg w-full max-w-2xl flex flex-col items-center mx-auto">
+        {/* 작성자 */}
         <div className="w-full flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <img src={data.author?.avatar || "/default-profile.png"} alt={data.author?.name || "프로필"} className="w-8 h-8 rounded-full" />
@@ -64,7 +60,11 @@ const DetailPage: React.FC = () => {
           </div>
           <span className="text-sm text-gray-400">{new Date(data.createdAt).toLocaleDateString()}</span>
         </div>
+
+        {/* 제목 */}
         <div className="text-white font-bold text-2xl mb-2 w-full text-left">{data.title}</div>
+
+        {/* 썸네일 */}
         <div className="flex justify-center mb-8 w-full">
           <div className="relative w-72 h-72 flex items-center justify-center">
             <img src={data.thumbnail} alt={data.title} className="w-72 h-72 rounded-full object-cover shadow-2xl border-4 border-black" style={{ boxShadow: "0 10px 40px 10px rgba(0,0,0,0.5)" }} />
@@ -81,7 +81,11 @@ const DetailPage: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* 내용 */}
         <div className="text-gray-200 mb-5 w-full text-center">{data.content}</div>
+
+        {/* 태그 */}
         <div className="flex flex-wrap gap-2 mb-3 w-full justify-center">
           {data.tags?.map((tag) => (
             <span key={tag.id} className="bg-gray-800 text-white text-xs px-3 py-1 rounded-full shadow">
@@ -89,6 +93,8 @@ const DetailPage: React.FC = () => {
             </span>
           ))}
         </div>
+
+        {/* 좋아요 수 */}
         <div className="flex items-center gap-3 justify-center w-full mt-2">
           <span role="img" aria-label="like" className="text-pink-400 text-2xl">
             ❤️
@@ -96,6 +102,13 @@ const DetailPage: React.FC = () => {
           <span className="text-white text-lg">{data.likes?.length ?? 0}</span>
         </div>
       </div>
+
+      {/* 댓글 섹션 */}
+      {isAuth && (
+        <div className="w-full max-w-2xl mx-auto mt-10">
+          <CommentSection lpId={Number(lpid)} />
+        </div>
+      )}
     </div>
   );
 };
