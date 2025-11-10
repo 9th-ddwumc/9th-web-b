@@ -1,13 +1,17 @@
-const CommentListSkeleton = () => {
+import CommentListSkeleton from "./CommentListSkeleton.tsx";
+
+interface CommentListSkeletonListProps {
+  count: number;
+}
+
+const CommentListSkeletonList = ({ count }: CommentListSkeletonListProps) => {
   return (
-    <div className="flex items-center gap-3 animate-pulse mb-4">
-      <div className="w-8 h-8 rounded-full bg-gray-300" />
-      <div className="flex flex-col gap-2">
-        <div className="w-24 h-4 bg-gray-300 rounded" />
-        <div className="w-150 h-4 bg-gray-300 rounded" />
-      </div>
+    <div className="mt-10 text-white space-y-4">
+      {Array.from({ length: count }).map((_, idx) => (
+        <CommentListSkeleton key={idx} />
+      ))}
     </div>
   );
 };
 
-export default CommentListSkeleton;
+export default CommentListSkeletonList;

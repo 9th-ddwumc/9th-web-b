@@ -56,11 +56,9 @@ const CommentList = () => {
   const { mutate: updateComment } = useUpdateMyComment();
   const { mutate: deleteComment } = useDeleteMyComment();
 
-  if (isLoading) return <CommentListSkeleton count={3} />;
-  if (isError) return <div className="text-red-500">댓글 불러오기 실패</div>;
-
   return (
     <div className="mt-10 text-white">
+      {/* 헤더 - 항상 표시 */}
       <div className="flex justify-between items-center mb-4">
         <div className="font-bold text-2xl">댓글</div>
         <div className="flex gap-2">
@@ -83,6 +81,7 @@ const CommentList = () => {
         </div>
       </div>
 
+      {/* 댓글 입력란 - 항상 표시 */}
       <div className="flex items-center gap-2 mb-10">
         <input
           type="text"
@@ -97,96 +96,105 @@ const CommentList = () => {
             addComment({ content: commentInput.trim() });
             setCommentInput("");
           }}
-          className="bg-pink-500 text-white font-semibold px-4 py-2 rounded hover:bg-pink-500 cursor-pointer"
+          className="bg-pink-500 text-white font-semibold px-4 py-2 rounded hover:bg-pink-600 cursor-pointer"
         >
           작성
         </button>
       </div>
 
-      <div className="space-y-4">
-        {(comments ?? []).map((comment) => {
-          const isMine = comment.authorId === myInfo?.data.id;
+      {/* 댓글 목록 - 상태별 분기 */}
+      {isLoading && <CommentListSkeleton count={3} />}
+      
+      {isError && (
+        <div className="text-red-500">댓글 불러오기 실패</div>
+      )}
 
-          return (
-            <div key={comment.id} className="relative flex items-start gap-2">
-              <div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center font-bold">
-                {comment.author?.name?.[0] ?? "?"}
-              </div>
+      {!isLoading && !isError && (
+        <div className="space-y-4">
+          {(comments ?? []).map((comment) => {
+            const isMine = comment.authorId === myInfo?.data.id;
 
-              <div className="flex flex-col items-start ml-2 w-full">
-                <span className="font-semibold">
-                  {comment.author?.name ?? "알 수 없음"}
-                </span>
+            return (
+              <div key={comment.id} className="relative flex items-start gap-2">
+                <div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center font-bold">
+                  {comment.author?.name?.[0] ?? "?"}
+                </div>
 
-                {editingCommentId === comment.id ? (
-                  <>
-                    <input
-                      value={editingContent}
-                      onChange={(e) => setEditingContent(e.target.value)}
-                      className="w-full text-white px-2 py-1 rounded"
-                    />
-                    <div className="flex gap-2 mt-1">
+                <div className="flex flex-col items-start ml-2 w-full">
+                  <span className="font-semibold">
+                    {comment.author?.name ?? "알 수 없음"}
+                  </span>
+
+                  {editingCommentId === comment.id ? (
+                    <>
+                      <input
+                        value={editingContent}
+                        onChange={(e) => setEditingContent(e.target.value)}
+                        className="w-full text-white px-2 py-1 rounded bg-[#202024]"
+                      />
+                      <div className="flex gap-2 mt-1">
+                        <button
+                          onClick={() => {
+                            updateComment({
+                              lpId: Number(lpId),
+                              commentId: comment.id,
+                              content: editingContent,
+                            });
+                            setEditingCommentId(null);
+                          }}
+                          className="bg-[#202024] text-white px-2 py-1 rounded text-sm cursor-pointer hover:text-pink-500"
+                        >
+                          저장
+                        </button>
+                        <button
+                          onClick={() => setEditingCommentId(null)}
+                          className="bg-[#202024] text-white px-2 py-1 rounded text-sm cursor-pointer hover:text-pink-500"
+                        >
+                          취소
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-sm text-gray-300">{comment.content}</p>
+                      <span className="text-xs text-gray-500 mt-1">
+                        {new Date(comment.updatedAt).toLocaleString()}
+                      </span>
+                    </>
+                  )}
+
+                  {isMine && editingCommentId !== comment.id && (
+                    <div className="absolute right-0 top-0 flex gap-2">
                       <button
                         onClick={() => {
-                          updateComment({
-                            lpId: Number(lpId),
-                            commentId: comment.id,
-                            content: editingContent,
-                          });
-                          setEditingCommentId(null);
+                          setEditingCommentId(comment.id);
+                          setEditingContent(comment.content);
                         }}
-                        className="bg-[#202024] text-white px-2 py-1 rounded text-sm cursor-pointer hover:text-pink-500"
+                        className="bg-[#202024] w-10 h-5 rounded-sm text-xs cursor-pointer"
                       >
-                        저장
+                        수정
                       </button>
                       <button
-                        onClick={() => setEditingCommentId(null)}
-                        className="bg-[#202024] text-white px-2 py-1 rounded text-sm cursor-pointer hover:text-pink-500"
+                        onClick={() => {
+                          if (confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
+                            deleteComment({
+                              lpId: Number(lpId),
+                              commentId: comment.id,
+                            });
+                          }
+                        }}
+                        className="bg-[#202024] w-10 h-5 rounded-sm text-xs cursor-pointer"
                       >
-                        취소
+                        삭제
                       </button>
                     </div>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-sm text-gray-300">{comment.content}</p>
-                    <span className="text-xs text-gray-500 mt-1">
-                      {new Date(comment.updatedAt).toLocaleString()}
-                    </span>
-                  </>
-                )}
-
-                {isMine && editingCommentId !== comment.id && (
-                  <div className="absolute right-0 top-0 flex gap-2">
-                    <button
-                      onClick={() => {
-                        setEditingCommentId(comment.id);
-                        setEditingContent(comment.content);
-                      }}
-                      className="bg-[#202024] w-10 h-5 rounded-sm text-xs cursor-pointer"
-                    >
-                      수정
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
-                          deleteComment({
-                            lpId: Number(lpId),
-                            commentId: comment.id,
-                          });
-                        }
-                      }}
-                      className="bg-[#202024] w-10 h-5 rounded-sm text-xs cursor-pointer"
-                    >
-                      삭제
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

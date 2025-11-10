@@ -1,4 +1,4 @@
-import { CommonResponse, CursorBasedResponse } from "./common";
+import type { CommonResponse, PaginatedResponse } from "./common";
 
 export type Tag = {
   id: number;
@@ -30,7 +30,7 @@ export type RequestLpDto = {
 
 export type ResponseLpDto = CommonResponse<Lp>;
 
-export type ResponseLpListDto = CursorBasedResponse<Lp[]>;
+export type ResponseLpListDto = PaginatedResponse<Lp[]>;
 
 export type ResponseLikeLpDto = CommonResponse<{
   id: number;
