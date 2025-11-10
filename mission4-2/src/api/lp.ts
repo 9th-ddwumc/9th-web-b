@@ -2,6 +2,11 @@ import type { PaginationDto } from "../types/commons";
 import type { ResponseLPListDto } from "../types/lp";
 import axiosInstance from "./axiosInstance";
 
+export async function toggleLike(lpId: number) {
+  const res = await axiosInstance.post(`/lps/${lpId}/likes`);
+  return res.data;
+}
+
 export const getLPList = async (paginationDto: PaginationDto): Promise<ResponseLPListDto> => {
   const { data } = await axiosInstance.get("/lps", {
     params: paginationDto,
@@ -11,7 +16,6 @@ export const getLPList = async (paginationDto: PaginationDto): Promise<ResponseL
 };
 
 export async function getLPDetail(lpid: string) {
-  const response = await fetch(`http://localhost:8000/v1/lps/${lpid}`);
-  if (!response.ok) throw new Error("Failed to fetch LP detail");
-  return response.json();
+  const res = await axiosInstance.get(`/lps/${lpid}`);
+  return res.data;
 }

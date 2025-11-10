@@ -16,53 +16,57 @@ interface LpCreateParam {
 const gridStyles = "grid grid-cols-5 gap-2 mt-10 px-8";
 const token = localStorage.getItem("accessToken");
 
-// LP 생성 요청 함수
-async function createLp(newLp: LpCreateParam) {
-  // body 구조 맞춰서 전달, 실제 썸네일은 별도 업로드 후 URL 필요
-  return axios.post(import.meta.env.VITE_SERVER_API_URL + "/v1/lps", newLp, {
+async function uploadImage(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await axios.post(import.meta.env.VITE_SERVER_API_URL + "/v1/uploads", formData, {
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
     },
+  });
+
+  return res.data.data.url;
+}
+
+async function createLp(newLp: LpCreateParam) {
+  return axios.post(import.meta.env.VITE_SERVER_API_URL + "/v1/lps", newLp, {
+    headers: { Authorization: `Bearer ${token}` },
   });
 }
 
 const HomePage = () => {
   const [search, setSearch] = useState("");
   const [order, setOrder] = useState<PaginationOrder>("desc");
-  // 혹은 const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [lpFile, setLpFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | undefined>(undefined);
   const [lpTags, setLpTags] = useState<string[]>([]);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [lpName, setLpName] = useState("");
   const [lpContent, setLpContent] = useState("");
   const [lpTagInput, setLpTagInput] = useState("");
-
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const queryClient = useQueryClient();
-
   const { data, isPending, isError } = useGetLpList({
     cursor: undefined,
     search,
     order,
     limit: 20,
   });
-
   const navigate = useNavigate();
 
   function getTimeDiff(dateString: string) {
     const now = new Date();
     const created = new Date(dateString);
-    const mins = Math.floor((now - created) / 60000);
+    const mins = Math.floor((now.getTime() - created.getTime()) / 60000);
     if (mins < 1) return "방금 전";
-    if (mins < 60) return `${mins} mins ago`;
+    if (mins < 60) return `${mins}분 전`;
     const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours} hours ago`;
-    return `${Math.floor(hours / 24)} days ago`;
+    if (hours < 24) return `${hours}시간 전`;
+    return `${Math.floor(hours / 24)}일 전`;
   }
 
-  // 태그 추가
   function handleAddTag() {
     const trimmed = lpTagInput.trim();
     if (trimmed && !lpTags.includes(trimmed)) {
@@ -70,25 +74,19 @@ const HomePage = () => {
       setLpTagInput("");
     }
   }
-  // 태그 삭제
+
   function handleRemoveTag(tag: string) {
-    setLpTags(lpTags.filter((t: string) => t !== tag));
+    setLpTags(lpTags.filter((t) => t !== tag));
   }
-  // 파일 변경
+
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     setLpFile(file || null);
-    if (file) {
-      setFilePreview(URL.createObjectURL(file));
-    } else {
-      setFilePreview(undefined);
-    }
+    setFilePreview(file ? URL.createObjectURL(file) : undefined);
   }
 
-  // 등록 버튼 활성화 조건
   const isFormFilled = lpName && lpContent && lpTags.length > 0 && lpFile;
 
-  // LP 등록 mutation (실제 구현할 때 썸네일은 파일 업로드 후 URL 받아서 넣어야 함)
   const lpMutation = useMutation<void, Error, LpCreateParam>({
     mutationFn: async (newLp) => await createLp(newLp),
     onSuccess: () => {
@@ -105,19 +103,23 @@ const HomePage = () => {
     },
   });
 
-  // LP 등록 처리
   const handleAddLp = async () => {
+    if (!lpFile) return;
+    const uploadedUrl = await uploadImage(lpFile);
+    console.log("업로드된 이미지 URL:", uploadedUrl);
+
     lpMutation.mutate({
       title: lpName,
       content: lpContent,
-      thumbnail: "https://your-server.com/your-image-path.jpg", // 실제 이미지 업로드 URL로 바꿔야 함
+      thumbnail: uploadedUrl,
       tags: lpTags,
       published: true,
     });
   };
-
   if (isPending) return <div className="mt-20 text-white">Loading...</div>;
   if (isError) return <div className="mt-20 text-white">Error...</div>;
+
+  console.log("현재 LP 목록 데이터:", data);
 
   return (
     <div className="min-h-screen bg-black">
@@ -131,47 +133,53 @@ const HomePage = () => {
           </button>
         </div>
       </div>
+
       <div className={gridStyles}>
-        {data?.map(
-          (lp) => (
-            console.log("LP 썸네일 경로:", lp.thumbnail),
-            (
-              <div
-                key={lp.id}
-                className="relative bg-gray-900 rounded-lg overflow-hidden flex aspect-square group cursor-pointer hover:scale-110 transition-transform duration-200"
-                onClick={() => navigate(`/lp/${lp.id}`)}
-              >
-                <img src={lp.thumbnail} alt={lp.title} className="w-full h-full object-cover" style={{ borderRadius: "8px" }} />
-                <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-4 bg-gradient-to-b from-black/40 via-black/70 to-black/95">
-                  <div className="font-bold text-white text-lg mb-2 break-words">{lp.title}</div>
-                  <div className="flex items-center gap-3 text-white text-sm mb-1">
-                    <span>{getTimeDiff(lp.createdAt)}</span>
-                    <span className="flex items-center">
-                      <span role="img" aria-label="like">
-                        ❤️
-                      </span>
-                      {lp.likes?.length ?? 0}
-                    </span>
-                  </div>
-                </div>
+        {data?.map((lp) => (
+          <div
+            key={lp.id}
+            className="relative bg-gray-900 rounded-lg overflow-hidden flex aspect-square group cursor-pointer hover:scale-110 transition-transform duration-200"
+            onClick={() => navigate(`/lp/${lp.id}`)}
+          >
+            <img
+              src={lp.thumbnail}
+              alt={lp.title}
+              className="w-full h-full object-cover"
+              style={{ borderRadius: "8px" }}
+              onError={(e) => {
+                console.warn("이미지 로드 실패:", lp.thumbnail);
+                (e.target as HTMLImageElement).src = "/LP.jpg";
+              }}
+            />
+            <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-4 bg-gradient-to-b from-black/40 via-black/70 to-black/95">
+              <div className="font-bold text-white text-lg mb-2 break-words">{lp.title}</div>
+              <div className="flex items-center gap-3 text-white text-sm mb-1">
+                <span>{getTimeDiff(lp.createdAt)}</span>
+                <span className="flex items-center">
+                  <span role="img" aria-label="like">
+                    ❤️
+                  </span>
+                  {lp.likes?.length ?? 0}
+                </span>
               </div>
-            )
-          )
-        )}
+            </div>
+          </div>
+        ))}
       </div>
+
       <button
         onClick={() => setIsModalOpen(true)}
         className="fixed right-8 bottom-8 flex items-center justify-center bg-pink-500 text-white rounded-full w-16 h-16 shadow-lg text-4xl z-50 hover:bg-pink-400 transition-colors duration-200"
       >
         <span className="relative -top-1">+</span>
       </button>
+
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div className="bg-gray-800 rounded-lg w-80 py-8 px-6 relative flex flex-col items-center shadow-2xl">
             <button className="absolute top-5 right-5 text-white text-2xl" onClick={() => setIsModalOpen(false)} aria-label="close">
               ×
             </button>
-            {/* 바이닐 이미지 → 클릭시 사진 선택 */}
             <img
               src={filePreview || "/LP.jpg"}
               alt="LP"
