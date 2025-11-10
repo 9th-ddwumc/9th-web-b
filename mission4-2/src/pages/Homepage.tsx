@@ -1,12 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import useGetLpList from "../hooks/queries/useGetLpList";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import type { PaginationOrder } from "../types/commons";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+interface LpCreateParam {
+  title: string;
+  content: string;
+  thumbnail: string;
+  tags: string[];
+  published: boolean;
+}
 
 const gridStyles = "grid grid-cols-5 gap-2 mt-10 px-8";
+const token = localStorage.getItem("accessToken");
 
-const HomePage: React.FC = () => {
-  const [search, setSearch] = useState<string>("");
-  const [order, setOrder] = useState<"asc" | "desc">("desc");
+// LP 생성 요청 함수
+async function createLp(newLp: LpCreateParam) {
+  // body 구조 맞춰서 전달, 실제 썸네일은 별도 업로드 후 URL 필요
+  return axios.post(import.meta.env.VITE_SERVER_API_URL + "/v1/lps", newLp, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+const HomePage = () => {
+  const [search, setSearch] = useState("");
+  const [order, setOrder] = useState<PaginationOrder>("desc");
+  // 혹은 const [order, setOrder] = useState<"asc" | "desc">("desc");
+  const [lpFile, setLpFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | undefined>(undefined);
+  const [lpTags, setLpTags] = useState<string[]>([]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [lpName, setLpName] = useState("");
+  const [lpContent, setLpContent] = useState("");
+  const [lpTagInput, setLpTagInput] = useState("");
+
+  const fileInputRef = useRef(null);
+  const queryClient = useQueryClient();
 
   const { data, isPending, isError } = useGetLpList({
     cursor: undefined,
@@ -20,7 +54,7 @@ const HomePage: React.FC = () => {
   function getTimeDiff(dateString: string) {
     const now = new Date();
     const created = new Date(dateString);
-    const mins = Math.floor((now.getTime() - created.getTime()) / 60000);
+    const mins = Math.floor((now - created) / 60000);
     if (mins < 1) return "방금 전";
     if (mins < 60) return `${mins} mins ago`;
     const hours = Math.floor(mins / 60);
@@ -28,13 +62,66 @@ const HomePage: React.FC = () => {
     return `${Math.floor(hours / 24)} days ago`;
   }
 
+  // 태그 추가
+  function handleAddTag() {
+    const trimmed = lpTagInput.trim();
+    if (trimmed && !lpTags.includes(trimmed)) {
+      setLpTags([...lpTags, trimmed]);
+      setLpTagInput("");
+    }
+  }
+  // 태그 삭제
+  function handleRemoveTag(tag: string) {
+    setLpTags(lpTags.filter((t: string) => t !== tag));
+  }
+  // 파일 변경
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    setLpFile(file || null);
+    if (file) {
+      setFilePreview(URL.createObjectURL(file));
+    } else {
+      setFilePreview(undefined);
+    }
+  }
+
+  // 등록 버튼 활성화 조건
+  const isFormFilled = lpName && lpContent && lpTags.length > 0 && lpFile;
+
+  // LP 등록 mutation (실제 구현할 때 썸네일은 파일 업로드 후 URL 받아서 넣어야 함)
+  const lpMutation = useMutation<void, Error, LpCreateParam>({
+    mutationFn: async (newLp) => await createLp(newLp),
+    onSuccess: () => {
+      setIsModalOpen(false);
+      queryClient.invalidateQueries(["lpList"]);
+      setLpName("");
+      setLpContent("");
+      setLpTags([]);
+      setLpFile(null);
+      setFilePreview(undefined);
+    },
+    onError: () => {
+      alert("등록 실패!");
+    },
+  });
+
+  // LP 등록 처리
+  const handleAddLp = async () => {
+    lpMutation.mutate({
+      title: lpName,
+      content: lpContent,
+      thumbnail: "https://your-server.com/your-image-path.jpg", // 실제 이미지 업로드 URL로 바꿔야 함
+      tags: lpTags,
+      published: true,
+    });
+  };
+
   if (isPending) return <div className="mt-20 text-white">Loading...</div>;
   if (isError) return <div className="mt-20 text-white">Error...</div>;
 
   return (
     <div className="min-h-screen bg-black">
       <div className="pt-8 px-8 flex items-center justify-between">
-        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="앨범 검색" className="border rounded px-4 py-2 w-64 text-black" />
         <div className="space-x-2">
           <button className={`px-4 py-2 rounded font-bold ${order === "asc" ? "bg-white text-black" : "bg-gray-800 text-white"}`} onClick={() => setOrder("asc")}>
             오래된순
@@ -45,37 +132,96 @@ const HomePage: React.FC = () => {
         </div>
       </div>
       <div className={gridStyles}>
-        {data?.map((lp: any) => (
-          <div
-            key={lp.id}
-            className="
-              relative bg-gray-900 rounded-lg overflow-hidden flex aspect-square group cursor-pointer hover:scale-110 transition-transform duration-200
-            "
-            onClick={() => navigate(`/lp/${lp.id}`)}
-          >
-            <img src={lp.thumbnail} alt={lp.title} className="w-full h-full object-cover" style={{ borderRadius: "8px" }} />
-            <div
-              className="
-                absolute top-0 left-0 w-full h-full flex flex-col justify-end
-                opacity-0 group-hover:opacity-100
-                transition-opacity duration-200
-                p-4
-                bg-gradient-to-b from-black/40 via-black/70 to-black/95"
-            >
-              <div className="font-bold text-white text-lg mb-2 break-words">{lp.title}</div>
-              <div className="flex items-center gap-3 text-white text-sm mb-1">
-                <span>{getTimeDiff(lp.createdAt)}</span>
-                <span className="flex items-center">
-                  <span role="img" aria-label="like">
-                    ❤️
-                  </span>
-                  {lp.likes?.length ?? 0}
-                </span>
+        {data?.map(
+          (lp) => (
+            console.log("LP 썸네일 경로:", lp.thumbnail),
+            (
+              <div
+                key={lp.id}
+                className="relative bg-gray-900 rounded-lg overflow-hidden flex aspect-square group cursor-pointer hover:scale-110 transition-transform duration-200"
+                onClick={() => navigate(`/lp/${lp.id}`)}
+              >
+                <img src={lp.thumbnail} alt={lp.title} className="w-full h-full object-cover" style={{ borderRadius: "8px" }} />
+                <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-4 bg-gradient-to-b from-black/40 via-black/70 to-black/95">
+                  <div className="font-bold text-white text-lg mb-2 break-words">{lp.title}</div>
+                  <div className="flex items-center gap-3 text-white text-sm mb-1">
+                    <span>{getTimeDiff(lp.createdAt)}</span>
+                    <span className="flex items-center">
+                      <span role="img" aria-label="like">
+                        ❤️
+                      </span>
+                      {lp.likes?.length ?? 0}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
+            )
+          )
+        )}
       </div>
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="fixed right-8 bottom-8 flex items-center justify-center bg-pink-500 text-white rounded-full w-16 h-16 shadow-lg text-4xl z-50 hover:bg-pink-400 transition-colors duration-200"
+      >
+        <span className="relative -top-1">+</span>
+      </button>
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-gray-800 rounded-lg w-80 py-8 px-6 relative flex flex-col items-center shadow-2xl">
+            <button className="absolute top-5 right-5 text-white text-2xl" onClick={() => setIsModalOpen(false)} aria-label="close">
+              ×
+            </button>
+            {/* 바이닐 이미지 → 클릭시 사진 선택 */}
+            <img
+              src={filePreview || "/LP.jpg"}
+              alt="LP"
+              className="w-32 h-32 mb-6 rounded-full object-cover cursor-pointer border-4 border-gray-900 transition"
+              onClick={() => fileInputRef.current?.click()}
+            />
+            <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} />
+            <input className="w-full mb-3 p-2 rounded bg-gray-700 text-white placeholder-gray-400" placeholder="LP Name" value={lpName} onChange={(e) => setLpName(e.target.value)} />
+            <input className="w-full mb-3 p-2 rounded bg-gray-700 text-white placeholder-gray-400" placeholder="LP Content" value={lpContent} onChange={(e) => setLpContent(e.target.value)} />
+            <div className="flex w-full mb-3">
+              <input
+                className="flex-1 p-2 rounded bg-gray-700 text-white placeholder-gray-400"
+                placeholder="LP Tag"
+                value={lpTagInput}
+                onChange={(e) => setLpTagInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddTag();
+                  }
+                }}
+              />
+              <button
+                className={`ml-2 px-4 rounded ${lpTagInput.trim() ? "bg-gray-400 text-black" : "bg-gray-600 text-gray-500 cursor-not-allowed"}`}
+                onClick={handleAddTag}
+                disabled={!lpTagInput.trim()}
+              >
+                Add
+              </button>
+            </div>
+            <div className="w-full flex flex-wrap gap-2 mb-3">
+              {lpTags.map((tag) => (
+                <div key={tag} className="flex items-center bg-gray-900 rounded px-3 py-2 text-white">
+                  {tag}
+                  <button className="ml-2 text-gray-400 hover:text-red-400 font-bold text-lg" onClick={() => handleRemoveTag(tag)} type="button">
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button
+              className={`w-full py-2 mt-2 rounded ${isFormFilled ? "bg-pink-500 text-white hover:bg-pink-400 transition-colors duration-200" : "bg-gray-400 text-gray-300 cursor-not-allowed"}`}
+              disabled={!isFormFilled}
+              onClick={handleAddLp}
+            >
+              Add LP
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
