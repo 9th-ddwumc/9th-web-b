@@ -4,6 +4,7 @@ import { getLpList } from "../apis/lp";
 import { PAGINATION_ORDER } from "../enums/common";
 import { Link } from "react-router-dom";
 import AddLpModal from "../components/AddLpModal";
+import { useThrottle } from "../hooks/useThrottle";
 
 const HomePage = () => {
   const [order, setOrder] = useState<PAGINATION_ORDER>(PAGINATION_ORDER.desc);
@@ -24,17 +25,28 @@ const HomePage = () => {
       initialPageParam: 0,
     });
 
+  const throttledTrigger = useThrottle(1, 3000);
+  // 3000ms = 3초 (영상처럼 데모용). 제출할 때는 1초로 바꿔도 됨.
+
   useEffect(() => {
     if (!hasNextPage) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) fetchNextPage();
+        if (entries[0].isIntersecting) {
+          if (throttledTrigger === 1) {
+            console.log("🔥 throttled fetchNextPage 실행!");
+            fetchNextPage();
+          }
+        }
       },
       { threshold: 1.0 }
     );
+
     if (observerRef.current) observer.observe(observerRef.current);
+
     return () => observer.disconnect();
-  }, [fetchNextPage, hasNextPage]);
+  }, [throttledTrigger, fetchNextPage, hasNextPage]);
 
   const realData = data?.pages.flatMap((page) => page.data.data) ?? [];
 
