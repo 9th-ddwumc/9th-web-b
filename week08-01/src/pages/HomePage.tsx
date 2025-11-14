@@ -42,8 +42,7 @@ const HomePage = () => {
     <div className="p-6 text-white relative min-h-screen">
       {/* 🔼 헤더: 제목 + 버튼들 */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">LP 목록 🎧</h1>
-
+        <h1 className="text-xl font-bold">LP 목록 🎧</h1>
         {/* ✅ 오른쪽 영역 */}
         <div className="flex items-center gap-3">
           {/* 최신/오래된순 버튼 */}

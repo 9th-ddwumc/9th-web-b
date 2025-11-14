@@ -106,8 +106,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <AuthContext.Provider
-      // 🔥 key를 user.id로 주면 프로필 수정 시 Context 리렌더링 강제됨
-      key={user?.id || "no-user"}
+      key={
+        user
+          ? `${user.id}-${user.name}-${user.updatedAt ?? Date.now()}`
+          : "no-user"
+      }
       value={{
         accessToken,
         refreshToken,

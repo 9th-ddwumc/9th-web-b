@@ -1,28 +1,30 @@
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getLpDetail } from "../apis/lp";
-import { PAGINATION_ORDER } from "../enums/common";
-import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getLpDetail, postLike, deleteLike } from "../apis/lp";
 import {
   getLpComments,
   postLpComment,
   patchLpComment,
   deleteLpComment,
 } from "../apis/getLpComments";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { PAGINATION_ORDER } from "../enums/common";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import type { RequestLpDto } from "../types/lp";
 
 const LpDetailPage = () => {
   const { lpId } = useParams<{ lpId: string }>();
   const id = Number(lpId);
   const queryClient = useQueryClient();
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth(); // ✅ user 정보 필요 (user.id 확인용)
 
   const [order, setOrder] = useState<PAGINATION_ORDER>(PAGINATION_ORDER.desc);
   const [content, setContent] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
   /** ✅ LP 상세 정보 */
   const {
@@ -36,6 +38,36 @@ const LpDetailPage = () => {
   });
 
   const lp = lpData?.data ?? null;
+
+  /** ✅ 좋아요 여부 및 개수 계산 */
+  useEffect(() => {
+    if (lp && user) {
+      const liked = lp.likes?.some((like: any) => like.userId === user.id);
+      setIsLiked(liked ?? false);
+      setLikeCount(lp.likes?.length ?? 0);
+    }
+  }, [lp, user]);
+
+  /** ✅ 좋아요 / 취소 Mutation */
+  const likeMutation = useMutation({
+    mutationFn: ({ lpId }: RequestLpDto) => postLike({ lpId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lpDetail", id] });
+    },
+  });
+
+  const unlikeMutation = useMutation({
+    mutationFn: ({ lpId }: RequestLpDto) => deleteLike({ lpId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lpDetail", id] });
+    },
+  });
+
+  const handleLike = () => {
+    if (!accessToken) return alert("로그인 후 이용해주세요 🎧");
+    if (isLiked) unlikeMutation.mutate({ lpId: id });
+    else likeMutation.mutate({ lpId: id });
+  };
 
   /** ✅ 댓글 목록 */
   const { data, isLoading: isCommentLoading } = useQuery({
@@ -75,9 +107,19 @@ const LpDetailPage = () => {
     },
   });
 
+  /** ✅ 댓글 유효성 검사 */
   const handleSubmit = () => {
+    if (!accessToken) return alert("로그인 후 댓글을 작성해주세요.");
     if (!content.trim()) return alert("댓글을 입력해주세요!");
+    if (content.length > 200) return alert("댓글은 200자 이내로 작성해주세요.");
     createComment.mutate();
+  };
+
+  const handleEditSubmit = () => {
+    if (!editText.trim()) return alert("수정할 내용을 입력해주세요!");
+    if (editText.length > 200)
+      return alert("댓글은 200자 이내로 작성해주세요.");
+    editComment.mutate();
   };
 
   if (isLpLoading)
@@ -111,7 +153,6 @@ const LpDetailPage = () => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-gray-800 border-4 border-gray-600 shadow-inner"></div>
         </div>
       </div>
-
       {/* LP 제목 / 내용 */}
       <div className="text-center mb-10 w-full flex flex-col items-center">
         <h1 className="text-3xl font-bold text-pink-400 mb-3 text-center">
@@ -120,20 +161,30 @@ const LpDetailPage = () => {
         <p className="text-gray-400 max-w-md text-center leading-relaxed">
           {lp.content}
         </p>
-
         {/* 태그 */}
         {lp.tags && lp.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-3">
-            {lp.tags.map((tag: string) => (
+            {lp.tags.map((tag: any) => (
               <span
-                key={tag}
+                key={tag.id}
                 className="bg-pink-500/20 text-pink-300 px-3 py-1 rounded-full text-sm"
               >
-                #{tag}
+                # {tag.name}
               </span>
             ))}
           </div>
         )}
+        {/* ❤️ 좋아요 버튼 */}
+        <button
+          onClick={handleLike}
+          className={`mt-6 px-6 py-2 rounded-full text-lg font-semibold transition-all ${
+            isLiked
+              ? "bg-pink-600 text-white hover:bg-pink-700"
+              : "bg-gray-700 hover:bg-gray-600 text-gray-200"
+          }`}
+        >
+          {isLiked ? "💖 좋아요" : "🤍 좋아요"} ({likeCount})
+        </button>
       </div>
 
       {/* 💬 댓글 섹션 */}
@@ -173,6 +224,7 @@ const LpDetailPage = () => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="댓글을 입력해주세요 🎵"
+            maxLength={200}
             className="flex-1 bg-gray-900 text-white placeholder-gray-500 p-2 rounded focus:outline-none"
           />
           <button
@@ -251,16 +303,16 @@ const LpDetailPage = () => {
                   )}
                 </div>
 
-                {/* 댓글 내용 */}
                 {editId === c.id ? (
                   <div className="flex items-center gap-2 mt-2">
                     <input
                       value={editText}
                       onChange={(e) => setEditText(e.target.value)}
                       className="flex-1 bg-gray-700 text-white p-2 rounded"
+                      maxLength={200}
                     />
                     <button
-                      onClick={() => editComment.mutate()}
+                      onClick={handleEditSubmit}
                       className="bg-green-600 px-3 py-1 rounded"
                     >
                       저장
