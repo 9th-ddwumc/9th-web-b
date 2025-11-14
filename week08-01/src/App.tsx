@@ -16,6 +16,7 @@ import ProtectedLayout from "./layouts/ProtectedLayout";
 import GooleLoginRedirectPage from "./pages/GoogleLoginRedirectPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import SearchPage from "./pages/SearchPage";
 
 // ✅ 공용 페이지 라우트
 const publicRoutes: RouteObject[] = [
@@ -28,6 +29,7 @@ const publicRoutes: RouteObject[] = [
       { path: "login", element: <LoginPage /> },
       { path: "signup", element: <SignupPage /> },
       { path: "lp/:lpId", element: <LpDetailPage /> },
+      { path: "/search", element: <SearchPage /> },
       { path: "v1/auth/google/callback", element: <GooleLoginRedirectPage /> },
     ],
   },

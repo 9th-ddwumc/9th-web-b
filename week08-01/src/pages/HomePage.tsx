@@ -4,6 +4,7 @@ import { getLpList } from "../apis/lp";
 import { PAGINATION_ORDER } from "../enums/common";
 import { Link } from "react-router-dom";
 import AddLpModal from "../components/AddLpModal";
+import { useThrottle } from "../hooks/useThrottle";
 
 const HomePage = () => {
   const [order, setOrder] = useState<PAGINATION_ORDER>(PAGINATION_ORDER.desc);
@@ -24,17 +25,28 @@ const HomePage = () => {
       initialPageParam: 0,
     });
 
+  const throttledTrigger = useThrottle(1, 3000);
+  // 3000ms = 3초 (영상처럼 데모용). 제출할 때는 1초로 바꿔도 됨.
+
   useEffect(() => {
     if (!hasNextPage) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) fetchNextPage();
+        if (entries[0].isIntersecting) {
+          if (throttledTrigger === 1) {
+            console.log("🔥 throttled fetchNextPage 실행!");
+            fetchNextPage();
+          }
+        }
       },
       { threshold: 1.0 }
     );
+
     if (observerRef.current) observer.observe(observerRef.current);
+
     return () => observer.disconnect();
-  }, [fetchNextPage, hasNextPage]);
+  }, [throttledTrigger, fetchNextPage, hasNextPage]);
 
   const realData = data?.pages.flatMap((page) => page.data.data) ?? [];
 
@@ -42,8 +54,7 @@ const HomePage = () => {
     <div className="p-6 text-white relative min-h-screen">
       {/* 🔼 헤더: 제목 + 버튼들 */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">LP 목록 🎧</h1>
-
+        <h1 className="text-xl font-bold">LP 목록 🎧</h1>
         {/* ✅ 오른쪽 영역 */}
         <div className="flex items-center gap-3">
           {/* 최신/오래된순 버튼 */}
