@@ -3,31 +3,33 @@ import { useState, useEffect, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-
-// 로그아웃 API
-const logoutApi = async (token: string) => {
-  if (!token) throw new Error("토큰이 없습니다.");
-  await axios.post(import.meta.env.VITE_SERVER_API_URL + "/v1/auth/signout", {}, { headers: { Authorization: `Bearer ${token}` } });
-};
-
-// 회원 탈퇴 API
-const withdrawApi = async (token: string) => {
-  if (!token) throw new Error("토큰이 없습니다.");
-  await axios.delete(import.meta.env.VITE_SERVER_API_URL + "/v1/users", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
+import search from "../../public/search.png";
+import { useSearchBar } from "../context/SearchBarContext";
 
 const NavBar = () => {
   const { isLoggedIn, userName, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { isOpen, setIsOpen } = useSearchBar();
   const navigate = useNavigate();
 
   // 로그아웃 Mutation
   const logoutMutation = useMutation<void, Error>({
-    mutationFn: () => logoutApi(localStorage.getItem("accessToken") ?? ""),
+    mutationFn: async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("토큰이 없습니다.");
+
+      return axios.post(
+        import.meta.env.VITE_SERVER_API_URL + "/v1/auth/signout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    },
     onSuccess: () => {
       logout();
       alert("로그아웃 되었습니다!");
@@ -39,9 +41,18 @@ const NavBar = () => {
     },
   });
 
-  // 회원탈퇴 Mutation (NEW)
+  // 회원탈퇴 Mutation
   const withdrawMutation = useMutation<void, Error>({
-    mutationFn: () => withdrawApi(localStorage.getItem("accessToken") ?? ""),
+    mutationFn: async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("토큰이 없습니다.");
+
+      return axios.delete(import.meta.env.VITE_SERVER_API_URL + "/v1/users", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    },
     onSuccess: () => {
       logout();
       alert("회원 탈퇴가 완료되었습니다.");
@@ -93,6 +104,9 @@ const NavBar = () => {
         <div className="flex gap-4 items-center">
           {isLoggedIn ? (
             <>
+              <button onClick={() => setIsOpen(!isOpen)} className="w-6 h-6 flex items-center justify-center text-white hover:opacity-80 transition">
+                <img src={search} alt="mark" className="w-6 h-6 object-contain" />
+              </button>
               <span className="text-white text-base">{userName ? `${userName}님 반갑습니다.` : ""}</span>
               <NavLink to="/mypage" className="bg-neutral-900 text-white px-3 py-1 rounded text-sm font-medium hover:bg-neutral-700 transition">
                 마이페이지
