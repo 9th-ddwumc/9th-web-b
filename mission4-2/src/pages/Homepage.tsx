@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useInfiniteLpList from "../hooks/queries/useInfiniteLpList";
+
 import { useSearchBar } from "../context/SearchBarContext";
-import Search from "../../public/search.png";
+import SearchIcon from "../../public/search.png";
 import { useDebounce } from "../hooks/useDebounce";
+import { useThrottle } from "../hooks/useThrottle";
 
 const HomePage = () => {
   const [search, setSearch] = useState("");
@@ -16,27 +18,35 @@ const HomePage = () => {
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const { isOpen } = useSearchBar();
 
-  // 인터섹션 옵저버 (무한스크롤)
+  // throttle을 이용해 무한스크롤 호출 남발 방지
+  const throttledTrigger = useThrottle(hasNextPage && !isFetchingNextPage, 800);
+  const throttledScroll = useThrottle(window.scrollY, 800);
+
+  useEffect(() => {
+    console.log("Throttle 실행됨! 현재 스크롤 위치:", throttledScroll);
+  }, [throttledScroll]);
+
+  // Infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+      if (entries[0].isIntersecting && throttledTrigger) {
         fetchNextPage();
       }
     });
 
     if (loaderRef.current) observer.observe(loaderRef.current);
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage]);
+  }, [throttledTrigger]);
 
   if (isPending) return <div className="mt-20 text-white">Loading...</div>;
   if (isError) return <div className="mt-20 text-white">Error...</div>;
 
   return (
     <div className="bg-black min-h-screen">
-      {/* 🔍 펼쳐지는 검색창 */}
+      {/* 펼쳐지는 검색창 */}
       {isOpen && (
         <div className="px-8 pt-8 flex items-center gap-3 animate-fadeIn">
-          <img src={Search} className="w-5 h-5 invert" />
+          <img src={SearchIcon} className="w-5 h-5 invert" />
 
           <input
             value={search}
@@ -54,6 +64,7 @@ const HomePage = () => {
           <button className={`px-4 py-2 rounded font-bold ${order === "asc" ? "bg-white text-black" : "bg-gray-800 text-white"}`} onClick={() => setOrder("asc")}>
             오래된순
           </button>
+
           <button className={`px-4 py-2 rounded font-bold ${order === "desc" ? "bg-white text-black" : "bg-gray-800 text-white"}`} onClick={() => setOrder("desc")}>
             최신순
           </button>
@@ -75,7 +86,7 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* 무한 스크롤 감시 지점 */}
+      {/* 무한스크롤 감시 지점 */}
       <div ref={loaderRef} className="h-14"></div>
 
       {isFetchingNextPage && <div className="text-center text-gray-400 py-4">불러오는 중...</div>}
