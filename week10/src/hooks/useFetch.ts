@@ -18,7 +18,7 @@ const useFetch = <T>(url: string, options?: AxiosRequestConfig) => {
 
         setData(response.data);
       } catch (err) {
-        setError("데이터를 가져오는데 에러가 발생했습니다.");
+        setError("데이터를 가져오는데 에러가 발생했습니다..");
       } finally {
         setIsLoading(false);
       }
