@@ -1,10 +1,10 @@
 import "./App.css";
-import UseMemoPage from "./11-useMemo/UseMemoPage";
+import HomePage from "./pages/Homapage";
 
 function App() {
   return (
     <>
-      <UseMemoPage />
+      <HomePage />
     </>
   );
 }
