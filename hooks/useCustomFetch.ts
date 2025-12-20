@@ -1,74 +1,41 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+// src/9th-web-b/hooks/useCustomFetch.ts
+import { useState, useCallback } from 'react';
 
-interface UseCustomFetchOptions {
-  url: string;
-  params?: Record<string, string | number>;
-  enabled?: boolean;
-}
-
-interface UseCustomFetchResult<T> {
+interface UseFetchResult<T> {
   data: T | null;
-  isLoading: boolean;
+  loading: boolean;
   error: string | null;
-  refetch: () => void;
+  fetchData: () => Promise<void>;
 }
 
-export function useCustomFetch<T>({
-  url,
-  params = {},
-  enabled = true,
-}: UseCustomFetchOptions): UseCustomFetchResult<T> {
+function useCustomFetch<T>(url: string | null): UseFetchResult<T> {
   const [data, setData] = useState<T | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    if (!url) return;
+
+    setLoading(true);
+    setError(null);
+
     try {
-      setIsLoading(true);
-      setError(null);
-
-      const apiKey = import.meta.env.VITE_TMDB_KEY;
-
-      if (!apiKey) {
-        throw new Error('API 키가 설정되지 않았습니다.');
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      // URL 파라미터 생성
-      const queryParams = new URLSearchParams(
-        Object.entries(params).map(([key, value]) => [key, String(value)])
-      ).toString();
-
-      const fullUrl = `https://api.themoviedb.org/3/${url}${
-        queryParams ? `?${queryParams}` : ''
-      }`;
-
-      const response = await axios.get<T>(fullUrl, {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      });
-
-      setData(response.data);
+      
+      const result = await response.json();
+      setData(result);
     } catch (err) {
-      const errorMessage = axios.isAxiosError(err)
-        ? `데이터를 불러오는데 실패했습니다. (${
-            err.response?.status || '네트워크 오류'
-          })`
-        : '데이터를 불러오는데 실패했습니다.';
-
-      setError(errorMessage);
-      console.error('Error fetching data:', err);
+      setError(err instanceof Error ? err.message : '데이터를 불러오는데 실패했습니다.');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  };
+  }, [url]);
 
-  useEffect(() => {
-    if (enabled) {
-      fetchData();
-    }
-  }, [url, JSON.stringify(params), enabled]);
-
-  return { data, isLoading, error, refetch: fetchData };
+  return { data, loading, error, fetchData };
 }
+
+export default useCustomFetch;

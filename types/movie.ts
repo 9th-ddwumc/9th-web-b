@@ -1,22 +1,15 @@
-export type Movie = {
-  adult: boolean;
-  backdrop_path: string;
-  genre_ids: number[];
+// src/9th-web-b/types/movie.ts
+export interface Movie {
   id: number;
-  original_language: string;
+  title: string;
   original_title: string;
   overview: string;
-  popularity: number;
-  poster_path: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
   release_date: string;
-  title: string;
-  video: boolean;
   vote_average: number;
   vote_count: number;
-};
-export type MovieResponse = {
-  page: number;
-  results: Movie[];
-  total_pages: number;
-  total_results: number;
-};
+  popularity: number;
+  adult: boolean;
+  genre_ids: number[];
+}

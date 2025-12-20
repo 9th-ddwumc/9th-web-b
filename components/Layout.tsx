@@ -1,13 +1,20 @@
-import { Outlet } from "react-router-dom";
-import Navbar from "./Navbar";
+// src/9th-web-b/components/Layout.tsx
+import React from 'react';
+import Navbar from './Navbar';
 
-export default function Layout() {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="app-layout">
       <Navbar />
-      <main>
-        <Outlet />
+      <main className="main-content">
+        {children}
       </main>
     </div>
   );
-}
+};
+
+export default Layout;

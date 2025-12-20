@@ -1,7 +1,14 @@
-export default function LoadingSpinner() {
+// src/9th-web-b/components/LoadingSpinner.tsx
+import React, { memo } from 'react';
+
+const LoadingSpinner: React.FC = memo(() => {
   return (
-    <div className="flex justify-center items-center min-h-96">
-      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+    <div className="loading-spinner">
+      <div className="spinner"></div>
     </div>
   );
-}
+});
+
+LoadingSpinner.displayName = 'LoadingSpinner';
+
+export default LoadingSpinner;
